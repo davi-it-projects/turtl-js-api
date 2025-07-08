@@ -1,8 +1,8 @@
-import { TTAPI } from "../Module/TTAPI.js";
+import { TurtlAPI } from "../Module/TurtlAPI.js";
 import { accountService } from "./loginService.js";
 
 // Change the host to your local API endpoint
-const api = new TTAPI(
+const api = new TurtlAPI(
     {
         host: "http://jsmodule.local/APIModule/usage/debugAPI",
         getAuthToken: () => localStorage.getItem("SessionKey")

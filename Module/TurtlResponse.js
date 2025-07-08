@@ -1,4 +1,4 @@
-export class TTResponse {
+export class TurtlResponse {
     constructor(success = false, message = "", data = {}) {
         this.success = success;
         this.message = message;
@@ -6,7 +6,7 @@ export class TTResponse {
     }
 
     static fromJson(json) {
-        return new TTResponse(
+        return new TurtlResponse(
             json.success ?? false,
             json.message ?? "",
             json.data ?? {},
@@ -14,10 +14,10 @@ export class TTResponse {
     }
 
     static Error(message) {
-        return new TTResponse(false, message);
+        return new TurtlResponse(false, message);
     }
 
     static Success(message = "", data = {}) {
-        return new TTResponse(true, message, data);
+        return new TurtlResponse(true, message, data);
     }
 }

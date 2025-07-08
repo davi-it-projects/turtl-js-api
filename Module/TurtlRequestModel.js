@@ -1,6 +1,6 @@
-import { TTResponse } from "./TTResponse.js";
+import { TurtlResponse } from "./TurtlResponse.js";
 
-export class TTRequestModel {
+export class TurtlRequestModel {
     constructor(data = {}, schema = {}, customValidator = null) {
         this._schema = schema;
         this._customValidator = customValidator;
@@ -9,7 +9,7 @@ export class TTRequestModel {
         Object.assign(this, data);
 
         // Run validation
-        const result = TTRequestModel.validateFields(schema, this);
+        const result = TurtlRequestModel.validateFields(schema, this);
         const custom = customValidator ? customValidator(this) : null;
 
         if (!result.success) {
@@ -19,7 +19,7 @@ export class TTRequestModel {
             this.validateResult = custom;
             this.isValid = false;
         } else {
-            this.validateResult = TTResponse.Success("Validation successful");
+            this.validateResult = TurtlResponse.Success("Validation successful");
             this.isValid = true;
         }
     }
@@ -30,30 +30,30 @@ export class TTRequestModel {
             const value = instance[key];
 
             if (rules.required && (value === undefined || value === null || value === "")) {
-                return TTResponse.Error(`${key} is required.`);
+                return TurtlResponse.Error(`${key} is required.`);
             }
 
             if (rules.type === "email" && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                return TTResponse.Error(`${key} must be a valid email.`);
+                return TurtlResponse.Error(`${key} must be a valid email.`);
             }
 
             if (rules.type === "number" && typeof value !== "number") {
-                return TTResponse.Error(`${key} must be a number.`);
+                return TurtlResponse.Error(`${key} must be a number.`);
             }
 
             if (rules.type === "string" && typeof value !== "string") {
-                return TTResponse.Error(`${key} must be a string.`);
+                return TurtlResponse.Error(`${key} must be a string.`);
             }
 
             if (rules.validator) {
                 const result = rules.validator(value, instance);
-                if (result instanceof TTResponse && !result.success) {
+                if (result instanceof TurtlResponse && !result.success) {
                     return result;
                 }
             }
         }
 
-        return TTResponse.Success();
+        return TurtlResponse.Success();
     }
 
     toDataObject() {
@@ -69,7 +69,7 @@ export class TTRequestModel {
     static createFactory(schema, customValidator = null) {
         return {
             create(data = {}) {
-                return new TTRequestModel(data, schema, customValidator);
+                return new TurtlRequestModel(data, schema, customValidator);
             }
         };
     }

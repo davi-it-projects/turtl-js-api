@@ -1,9 +1,9 @@
-import { APIService } from "../Module/APIService.js";
-import { TTRequestModel } from "../Module/TTRequestModel.js";
+import { TurtlAPIService } from "../Module/TurtlAPIService.js";
+import { TurtlRequestModel } from "../Module/TurtlRequestModel.js";
 
-const accountService = new APIService("account", "/account");
+const accountService = new TurtlAPIService("account", "/account");
 
-accountService.addModel('login',TTRequestModel.createFactory({
+accountService.addModel('login',TurtlRequestModel.createFactory({
     email: { required: true, type: "email" },
     password: { required: true, type: "string" }
 }));

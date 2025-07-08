@@ -1,6 +1,6 @@
-import {TTResponse} from "./TTResponse.js";
+import {TurtlResponse} from "./TurtlResponse.js";
 
-export class TTAPI {
+export class TurtlAPI {
     constructor({ host, getAuthToken = null }) {
         this.host = host;
         this.getAuthToken = getAuthToken;
@@ -18,7 +18,7 @@ export class TTAPI {
                 if (token) {
                     xhr.setRequestHeader("Authorization", `Bearer ${token}`);
                 } else {
-                    resolve(TTResponse.Error("Authentication required."));
+                    resolve(TurtlResponse.Error("Authentication required."));
                     return;
                 }
             }
@@ -26,13 +26,13 @@ export class TTAPI {
             xhr.onload = () => {
                 try {
                     const json = JSON.parse(xhr.responseText);
-                    resolve(TTResponse.fromJson(json));
+                    resolve(TurtlResponse.fromJson(json));
                 } catch (e) {
-                    resolve(TTResponse.Error("Invalid response"));
+                    resolve(TurtlResponse.Error("Invalid response"));
                 }
             };
 
-            xhr.onerror = () => resolve(TTResponse.Error("Network error"));
+            xhr.onerror = () => resolve(TurtlResponse.Error("Network error"));
             xhr.send(JSON.stringify(body));
         });
     }
@@ -40,7 +40,7 @@ export class TTAPI {
     async call(fullName, modelOrData) {
         let data = this.#getDataFromFullName(fullName);
         if (data['Failed']) {
-            return data['TTResponse'];
+            return data['TurtlResponse'];
         }
         let service = data['Service'];
         let endpoint = data['Endpoint'];
@@ -57,7 +57,7 @@ export class TTAPI {
             let RequestModel = model.create();
             return await this.#callWithData(RequestModel, service, endpoint);
         }
-        return TTResponse.Error("Invalid data");
+        return TurtlResponse.Error("Invalid data");
     }
 
     async #callWithModel(requestModel, service, endpoint) {
@@ -73,7 +73,7 @@ export class TTAPI {
         const method = endpoint.method;
 
         try {
-            return await TTAPI.sendRequest(
+            return await TurtlAPI.sendRequest(
                 method,
                 url,
                 model.toDataObject(),
@@ -81,7 +81,7 @@ export class TTAPI {
                 this.getAuthToken
             );
         } catch (error) {
-            return TTResponse.Error("Request failed");
+            return TurtlResponse.Error("Request failed");
         }
     }
 
@@ -104,14 +104,14 @@ export class TTAPI {
 
         const service = this.getService(serviceName);
         if (!service) {
-            output['Response'] = TTResponse.Error(`Service '${serviceName}' not found.`);
+            output['Response'] = TurtlResponse.Error(`Service '${serviceName}' not found.`);
             return output;
         }
         output['Service'] = service;
 
         const endpoint = service.getEndpoint(endpointName);
         if (!endpoint) {
-            output['Response'] = TTResponse.Error(`Endpoint '${endpointName}' not found in service '${serviceName}'.`);
+            output['Response'] = TurtlResponse.Error(`Endpoint '${endpointName}' not found in service '${serviceName}'.`);
             return output;
         }
 
@@ -124,7 +124,7 @@ export class TTAPI {
         try{
             let InternalData = this.#getDataFromFullName(fullName);
             if (InternalData['Failed']) {
-                return InternalData['TTResponse'];
+                return InternalData['TurtlResponse'];
             }
             let service = InternalData['Service'];
             let endpoint = InternalData['Endpoint'];

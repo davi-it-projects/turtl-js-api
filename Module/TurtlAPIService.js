@@ -1,6 +1,6 @@
-import { TTEndpoint } from "./TTEndpoint.js";
+import { TurtlEndpoint } from "./TurtlEndpoint.js";
 
-export class APIService {
+export class TurtlAPIService {
     constructor(name, basePath) {
         this.name = name;
         this.basePath = basePath;
@@ -9,7 +9,7 @@ export class APIService {
     }
 
     addEndpoint(name, config) {
-        const endpoint = new TTEndpoint({ ...config, name });
+        const endpoint = new TurtlEndpoint({ ...config, name });
         if (this.Models.has(endpoint.modelName) === false) {
             console.log(this.Models);
             console.log(endpoint);
