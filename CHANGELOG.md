@@ -1,3 +1,10 @@
+## [0.1.1](https://github.com/davi-it-projects/turtl-js-api/compare/v0.1.0...v0.1.1) (2025-07-08)
+
+
+### Bug Fixes
+
+* update release ([abbc97f](https://github.com/davi-it-projects/turtl-js-api/commit/abbc97fcdef283cd14e5d7b8952670b0553db229))
+
 # [0.1.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.0.0...v0.1.0) (2025-07-08)
 
 
