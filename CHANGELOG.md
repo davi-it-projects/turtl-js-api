@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.1.1...v0.2.0) (2025-07-08)
+
+
+### Features
+
+* trigger build ([798cde2](https://github.com/davi-it-projects/turtl-js-api/commit/798cde27b2e1a7bbf5c65cb4c60e4b7da684d241))
+
 ## [0.1.1](https://github.com/davi-it-projects/turtl-js-api/compare/v0.1.0...v0.1.1) (2025-07-08)
 
 

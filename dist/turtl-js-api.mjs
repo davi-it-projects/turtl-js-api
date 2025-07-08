@@ -1,4 +1,169 @@
-class TTEndpoint {
+class TurtlResponse {
+    constructor(success = false, message = "", data = {}) {
+        this.success = success;
+        this.message = message;
+        this.data = data;
+    }
+
+    static fromJson(json) {
+        return new TurtlResponse(
+            json.success ?? false,
+            json.message ?? "",
+            json.data ?? {},
+        );
+    }
+
+    static Error(message) {
+        return new TurtlResponse(false, message);
+    }
+
+    static Success(message = "", data = {}) {
+        return new TurtlResponse(true, message, data);
+    }
+}
+
+class TurtlAPI {
+    constructor({ host, getAuthToken = null }) {
+        this.host = host;
+        this.getAuthToken = getAuthToken;
+        this.services = new Map();
+    }
+
+    static async sendRequest(method, url, body, requiresAuth, getAuthToken) {
+        return new Promise((resolve) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open(method, url);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            if (requiresAuth) {
+                const token = getAuthToken ? getAuthToken() : null;
+                if (token) {
+                    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+                } else {
+                    resolve(TurtlResponse.Error("Authentication required."));
+                    return;
+                }
+            }
+
+            xhr.onload = () => {
+                try {
+                    const json = JSON.parse(xhr.responseText);
+                    resolve(TurtlResponse.fromJson(json));
+                } catch (e) {
+                    resolve(TurtlResponse.Error("Invalid response"));
+                }
+            };
+
+            xhr.onerror = () => resolve(TurtlResponse.Error("Network error"));
+            xhr.send(JSON.stringify(body));
+        });
+    }
+
+    async call(fullName, modelOrData) {
+        let data = this.#getDataFromFullName(fullName);
+        if (data['Failed']) {
+            return data['TurtlResponse'];
+        }
+        let service = data['Service'];
+        let endpoint = data['Endpoint'];
+
+        const isModel = modelOrData && modelOrData._schema && typeof modelOrData._schema === "object";
+        return isModel
+            ? await this.#callWithModel(modelOrData, service, endpoint)
+            : await this.#callWithData(modelOrData, service, endpoint);
+    }
+
+    async #callWithData(data, service, endpoint) {
+        let model = service.getModel(endpoint.modelName);
+        if (model && model.create && typeof model.create === "function") {
+            let RequestModel = model.create();
+            return await this.#callWithData(RequestModel, service, endpoint);
+        }
+        return TurtlResponse.Error("Invalid data");
+    }
+
+    async #callWithModel(requestModel, service, endpoint) {
+        if (!requestModel.isValid) {
+            return requestModel.validateResult;
+        }
+
+        return await this.#sendRequest(requestModel, service, endpoint);
+    }
+
+    async #sendRequest(model, service, endpoint) {
+        const url = `${this.host}${service.basePath}${endpoint.path}`;
+        const method = endpoint.method;
+
+        try {
+            return await TurtlAPI.sendRequest(
+                method,
+                url,
+                model.toDataObject(),
+                endpoint.requiresAuth,
+                this.getAuthToken
+            );
+        } catch (error) {
+            return TurtlResponse.Error("Request failed");
+        }
+    }
+
+    addService(name, service) {
+        this.services.set(name, service);
+    }
+
+    getService(name) {
+        return this.services.get(name);
+    }
+
+    #getDataFromFullName(fullName){
+        const [serviceName, endpointName] = fullName.split(".");
+        let output = {
+            'Failed':true,
+            'Response':null,
+            'Service':null,
+            'Endpoint':null
+        };
+
+        const service = this.getService(serviceName);
+        if (!service) {
+            output['Response'] = TurtlResponse.Error(`Service '${serviceName}' not found.`);
+            return output;
+        }
+        output['Service'] = service;
+
+        const endpoint = service.getEndpoint(endpointName);
+        if (!endpoint) {
+            output['Response'] = TurtlResponse.Error(`Endpoint '${endpointName}' not found in service '${serviceName}'.`);
+            return output;
+        }
+
+        output['Endpoint'] = endpoint;
+        output['Failed'] = false;
+        return output;
+    }
+
+    createRequest(fullName, data) {
+        try{
+            let InternalData = this.#getDataFromFullName(fullName);
+            if (InternalData['Failed']) {
+                return InternalData['TurtlResponse'];
+            }
+            let service = InternalData['Service'];
+            let endpoint = InternalData['Endpoint'];
+            let model = service.getModel(endpoint.modelName);
+            if (model && model.create && typeof model.create === 'function') {
+                return model.create(data);
+            }
+            throw new Error(`Failed to create request '${fullName}'.`);
+        }
+        catch(error) {
+            throw error;
+        }
+    }
+
+}
+
+class TurtlEndpoint {
     constructor({ name, path, method = "POST", modelName: modelName, requiresAuth = false }) {
         this.name = name;
         this.path = path;
@@ -8,7 +173,7 @@ class TTEndpoint {
     }
 }
 
-class APIService {
+class TurtlAPIService {
     constructor(name, basePath) {
         this.name = name;
         this.basePath = basePath;
@@ -17,7 +182,7 @@ class APIService {
     }
 
     addEndpoint(name, config) {
-        const endpoint = new TTEndpoint({ ...config, name });
+        const endpoint = new TurtlEndpoint({ ...config, name });
         if (this.Models.has(endpoint.modelName) === false) {
             console.log(this.Models);
             console.log(endpoint);
@@ -42,5 +207,80 @@ class APIService {
     }
 }
 
-export { APIService };
+class TurtlRequestModel {
+    constructor(data = {}, schema = {}, customValidator = null) {
+        this._schema = schema;
+        this._customValidator = customValidator;
+
+        // Copy data onto the instance
+        Object.assign(this, data);
+
+        // Run validation
+        const result = TurtlRequestModel.validateFields(schema, this);
+        const custom = customValidator ? customValidator(this) : null;
+
+        if (!result.success) {
+            this.validateResult = result;
+            this.isValid = false;
+        } else if (custom && !custom.success) {
+            this.validateResult = custom;
+            this.isValid = false;
+        } else {
+            this.validateResult = TurtlResponse.Success("Validation successful");
+            this.isValid = true;
+        }
+    }
+
+    static validateFields(schema, instance) {
+        for (const key in schema) {
+            const rules = schema[key];
+            const value = instance[key];
+
+            if (rules.required && (value === undefined || value === null || value === "")) {
+                return TurtlResponse.Error(`${key} is required.`);
+            }
+
+            if (rules.type === "email" && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                return TurtlResponse.Error(`${key} must be a valid email.`);
+            }
+
+            if (rules.type === "number" && typeof value !== "number") {
+                return TurtlResponse.Error(`${key} must be a number.`);
+            }
+
+            if (rules.type === "string" && typeof value !== "string") {
+                return TurtlResponse.Error(`${key} must be a string.`);
+            }
+
+            if (rules.validator) {
+                const result = rules.validator(value, instance);
+                if (result instanceof TurtlResponse && !result.success) {
+                    return result;
+                }
+            }
+        }
+
+        return TurtlResponse.Success();
+    }
+
+    toDataObject() {
+        const cleaned = {};
+        for (const key in this) {
+            if (!["_schema", "_customValidator", "validateResult", "isValid"].includes(key)) {
+                cleaned[key] = this[key];
+            }
+        }
+        return cleaned;
+    }
+
+    static createFactory(schema, customValidator = null) {
+        return {
+            create(data = {}) {
+                return new TurtlRequestModel(data, schema, customValidator);
+            }
+        };
+    }
+}
+
+export { TurtlAPI, TurtlAPIService, TurtlEndpoint, TurtlRequestModel, TurtlResponse };
 //# sourceMappingURL=turtl-js-api.mjs.map
