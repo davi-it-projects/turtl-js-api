@@ -1,3 +1,10 @@
+# [0.3.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.2.1...v0.3.0) (2025-07-09)
+
+
+### Features
+
+* customizable rules ([63b0267](https://github.com/davi-it-projects/turtl-js-api/commit/63b026711e2514386a488d41216ad8fb49671baf))
+
 ## [0.2.1](https://github.com/davi-it-projects/turtl-js-api/compare/v0.2.0...v0.2.1) (2025-07-09)
 
 
