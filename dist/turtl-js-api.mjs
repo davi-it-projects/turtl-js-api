@@ -77,7 +77,7 @@ class TurtlAPI {
         let model = service.getModel(endpoint.modelName);
         if (model && model.create && typeof model.create === "function") {
             let RequestModel = model.create();
-            return await this.#callWithData(RequestModel, service, endpoint);
+            return await this.#callWithModel(RequestModel, service, endpoint);
         }
         return TurtlResponse.Error("Invalid data");
     }

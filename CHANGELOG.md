@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/davi-it-projects/turtl-js-api/compare/v0.2.0...v0.2.1) (2025-07-09)
+
+
+### Bug Fixes
+
+* recursion error ([6089a57](https://github.com/davi-it-projects/turtl-js-api/commit/6089a57190a6cd2a497addea4a96d78b2afc0e4c))
+
 # [0.2.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.1.1...v0.2.0) (2025-07-08)
 
 
