@@ -1,15 +1,14 @@
 import { TurtlResponse } from "./TurtlResponse.js";
 
 export class TurtlRequestModel {
-    constructor(data = {}, schema = {}, customValidator = null) {
+    constructor(data = {}, schema = {}, customValidator = null, api = null) {
         this._schema = schema;
         this._customValidator = customValidator;
+        this._api = api;
 
-        // Copy data onto the instance
         Object.assign(this, data);
 
-        // Run validation
-        const result = TurtlRequestModel.validateFields(schema, this);
+        const result = TurtlRequestModel.validateFields(schema, this, api);
         const custom = customValidator ? customValidator(this) : null;
 
         if (!result.success) {
@@ -24,29 +23,25 @@ export class TurtlRequestModel {
         }
     }
 
-    static validateFields(schema, instance) {
+    static validateFields(schema, instance, api) {
         for (const key in schema) {
-            const rules = schema[key];
+            const rulesArray = schema[key];
             const value = instance[key];
 
-            if (rules.required && (value === undefined || value === null || value === "")) {
-                return TurtlResponse.Error(`${key} is required.`);
+            if (!Array.isArray(rulesArray)) {
+                return TurtlResponse.Error(`Schema for field '${key}' must be an array.`);
             }
 
-            if (rules.type === "email" && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                return TurtlResponse.Error(`${key} must be a valid email.`);
-            }
+            for (const ruleEntry of rulesArray) {
+                const ruleName = ruleEntry.rule;
+                const options = ruleEntry.options || {};
 
-            if (rules.type === "number" && typeof value !== "number") {
-                return TurtlResponse.Error(`${key} must be a number.`);
-            }
+                const validator = api?.getValidationRule(ruleName);
+                if (typeof validator !== "function") {
+                    return TurtlResponse.Error(`Validation rule '${ruleName}' not registered.`);
+                }
 
-            if (rules.type === "string" && typeof value !== "string") {
-                return TurtlResponse.Error(`${key} must be a string.`);
-            }
-
-            if (rules.validator) {
-                const result = rules.validator(value, instance);
+                const result = validator(value, instance, options);
                 if (result instanceof TurtlResponse && !result.success) {
                     return result;
                 }
@@ -59,7 +54,7 @@ export class TurtlRequestModel {
     toDataObject() {
         const cleaned = {};
         for (const key in this) {
-            if (!["_schema", "_customValidator", "validateResult", "isValid"].includes(key)) {
+            if (!["_schema", "_customValidator", "_api", "validateResult", "isValid"].includes(key)) {
                 cleaned[key] = this[key];
             }
         }
@@ -68,8 +63,8 @@ export class TurtlRequestModel {
 
     static createFactory(schema, customValidator = null) {
         return {
-            create(data = {}) {
-                return new TurtlRequestModel(data, schema, customValidator);
+            create(data = {}, api = null) {
+                return new TurtlRequestModel(data, schema, customValidator, api);
             }
         };
     }

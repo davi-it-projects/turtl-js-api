@@ -10,10 +10,8 @@ export class TurtlAPIService {
 
     addEndpoint(name, config) {
         const endpoint = new TurtlEndpoint({ ...config, name });
-        if (this.Models.has(endpoint.modelName) === false) {
-            console.log(this.Models);
-            console.log(endpoint);
-            throw new Error(`Request model ${endpoint.modelName} does not exist`);
+        if (!this.Models.has(endpoint.modelName)) {
+            throw new Error(`Request model '${endpoint.modelName}' does not exist`);
         }
         this.endpoints.set(name, endpoint);
     }
@@ -22,9 +20,9 @@ export class TurtlAPIService {
         return this.endpoints.get(name);
     }
 
-    addModel(name,model) {
+    addModel(name, model) {
         if (this.Models.has(name)) {
-        throw new Error(`Request model '${name}' already exists`);
+            throw new Error(`Request model '${name}' already exists`);
         }
         this.Models.set(name, model);
     }

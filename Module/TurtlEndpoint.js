@@ -1,5 +1,5 @@
 export class TurtlEndpoint {
-    constructor({ name, path, method = "POST", modelName: modelName, requiresAuth = false }) {
+    constructor({ name, path, method = "POST", modelName, requiresAuth = false }) {
         this.name = name;
         this.path = path;
         this.method = method;
