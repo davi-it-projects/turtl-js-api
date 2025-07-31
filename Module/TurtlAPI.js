@@ -97,6 +97,10 @@ export class TurtlAPI {
         return this.validationRules.get(name);
     }
 
+    listValidationRules() {
+        return Array.from(this.validationRules.keys());
+    }
+
     static async sendRequest(method, url, body, requiresAuth, getAuthToken) {
         return new Promise((resolve) => {
             const xhr = new XMLHttpRequest();

@@ -99,6 +99,9 @@ TurtlRequestModel.createFactory({
     ]
 });
 ```
+```js
+TurtlAPI.listValidationRules() // returns a array of the rule names
+```
 
 ## Built-in Rules
 `required`
