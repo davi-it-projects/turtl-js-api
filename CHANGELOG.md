@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.3.0...v0.4.0) (2025-07-31)
+
+
+### Features
+
+* add arrayOf, instanceOf and typeOf rules and deprecated number and string rules ([974fd3d](https://github.com/davi-it-projects/turtl-js-api/commit/974fd3d4dc890c67cb5e726732ac7ae1267f5f1e))
+
 # [0.3.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.2.1...v0.3.0) (2025-07-09)
 
 
