@@ -112,11 +112,19 @@ class TurtlAPI {
     }
 
     registerValidationRule(name, fn) {
+        if (name in this.validationRules) {
+            console.warn(`[TurtlAPI] Validation rule '${name}' is already registered. Overwriting.`);
+        }
+
         this.validationRules.set(name, fn);
     }
 
     getValidationRule(name) {
         return this.validationRules.get(name);
+    }
+
+    listValidationRules() {
+        return Array.from(this.validationRules.keys());
     }
 
     static async sendRequest(method, url, body, requiresAuth, getAuthToken) {

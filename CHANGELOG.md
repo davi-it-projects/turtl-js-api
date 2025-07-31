@@ -1,3 +1,10 @@
+## [0.4.1](https://github.com/davi-it-projects/turtl-js-api/compare/v0.4.0...v0.4.1) (2025-07-31)
+
+
+### Bug Fixes
+
+* warn on ValidationRule override ([1f79532](https://github.com/davi-it-projects/turtl-js-api/commit/1f79532203f19ed7b7dbdd37f6e08c829fb153cb))
+
 # [0.4.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.3.0...v0.4.0) (2025-07-31)
 
 
