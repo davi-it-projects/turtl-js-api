@@ -90,6 +90,10 @@ export class TurtlAPI {
     }
 
     registerValidationRule(name, fn) {
+        if (name in this.validationRules) {
+            console.warn(`[TurtlAPI] Validation rule '${name}' is already registered. Overwriting.`);
+        }
+
         this.validationRules.set(name, fn);
     }
 
