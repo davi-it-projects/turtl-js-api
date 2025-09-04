@@ -271,6 +271,9 @@ class TurtlAPIService {
         this.basePath = basePath;
         this.endpoints = new Map();
         this.Models = new Map();
+
+        // Add default models
+        this.addModel('empty', TurtlRequestModel.createFactory({}));
     }
 
     addEndpoint(name, config) {
@@ -297,7 +300,7 @@ class TurtlAPIService {
     }
 }
 
-class TurtlRequestModel {
+let TurtlRequestModel$1 = class TurtlRequestModel {
     constructor(data = {}, schema = {}, customValidator = null, api = null) {
         this._schema = schema;
         this._customValidator = customValidator;
@@ -365,7 +368,7 @@ class TurtlRequestModel {
             }
         };
     }
-}
+};
 
-export { TurtlAPI, TurtlAPIService, TurtlEndpoint, TurtlRequestModel, TurtlResponse };
+export { TurtlAPI, TurtlAPIService, TurtlEndpoint, TurtlRequestModel$1 as TurtlRequestModel, TurtlResponse };
 //# sourceMappingURL=turtl-js-api.mjs.map

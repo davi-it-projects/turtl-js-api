@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.4.1...v0.5.0) (2025-09-04)
+
+
+### Features
+
+* services start with an default 'empty' model ([6141f6b](https://github.com/davi-it-projects/turtl-js-api/commit/6141f6b3207706eec68a73cf4e7026d5f4625b64))
+
 ## [0.4.1](https://github.com/davi-it-projects/turtl-js-api/compare/v0.4.0...v0.4.1) (2025-07-31)
 
 
