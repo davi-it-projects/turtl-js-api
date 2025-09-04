@@ -6,6 +6,9 @@ export class TurtlAPIService {
         this.basePath = basePath;
         this.endpoints = new Map();
         this.Models = new Map();
+
+        // Add default models
+        this.addModel('empty', TurtlRequestModel.createFactory({}));
     }
 
     addEndpoint(name, config) {
