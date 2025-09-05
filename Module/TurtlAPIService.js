@@ -1,4 +1,5 @@
 import { TurtlEndpoint } from "./TurtlEndpoint.js";
+import { TurtlRequestModel } from "./TurtlRequestModel.js";
 
 export class TurtlAPIService {
     constructor(name, basePath) {
