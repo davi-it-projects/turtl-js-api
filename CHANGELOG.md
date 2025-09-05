@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/davi-it-projects/turtl-js-api/compare/v0.5.0...v0.5.1) (2025-09-05)
+
+
+### Bug Fixes
+
+* missing imports ([ee69c84](https://github.com/davi-it-projects/turtl-js-api/commit/ee69c8407b556a0f75432d3d080991150d889996))
+
 # [0.5.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.4.1...v0.5.0) (2025-09-04)
 
 

@@ -265,42 +265,7 @@ class TurtlEndpoint {
     }
 }
 
-class TurtlAPIService {
-    constructor(name, basePath) {
-        this.name = name;
-        this.basePath = basePath;
-        this.endpoints = new Map();
-        this.Models = new Map();
-
-        // Add default models
-        this.addModel('empty', TurtlRequestModel.createFactory({}));
-    }
-
-    addEndpoint(name, config) {
-        const endpoint = new TurtlEndpoint({ ...config, name });
-        if (!this.Models.has(endpoint.modelName)) {
-            throw new Error(`Request model '${endpoint.modelName}' does not exist`);
-        }
-        this.endpoints.set(name, endpoint);
-    }
-
-    getEndpoint(name) {
-        return this.endpoints.get(name);
-    }
-
-    addModel(name, model) {
-        if (this.Models.has(name)) {
-            throw new Error(`Request model '${name}' already exists`);
-        }
-        this.Models.set(name, model);
-    }
-
-    getModel(name) {
-        return this.Models.get(name);
-    }
-}
-
-let TurtlRequestModel$1 = class TurtlRequestModel {
+class TurtlRequestModel {
     constructor(data = {}, schema = {}, customValidator = null, api = null) {
         this._schema = schema;
         this._customValidator = customValidator;
@@ -368,7 +333,42 @@ let TurtlRequestModel$1 = class TurtlRequestModel {
             }
         };
     }
-};
+}
 
-export { TurtlAPI, TurtlAPIService, TurtlEndpoint, TurtlRequestModel$1 as TurtlRequestModel, TurtlResponse };
+class TurtlAPIService {
+    constructor(name, basePath) {
+        this.name = name;
+        this.basePath = basePath;
+        this.endpoints = new Map();
+        this.Models = new Map();
+
+        // Add default models
+        this.addModel('empty', TurtlRequestModel.createFactory({}));
+    }
+
+    addEndpoint(name, config) {
+        const endpoint = new TurtlEndpoint({ ...config, name });
+        if (!this.Models.has(endpoint.modelName)) {
+            throw new Error(`Request model '${endpoint.modelName}' does not exist`);
+        }
+        this.endpoints.set(name, endpoint);
+    }
+
+    getEndpoint(name) {
+        return this.endpoints.get(name);
+    }
+
+    addModel(name, model) {
+        if (this.Models.has(name)) {
+            throw new Error(`Request model '${name}' already exists`);
+        }
+        this.Models.set(name, model);
+    }
+
+    getModel(name) {
+        return this.Models.get(name);
+    }
+}
+
+export { TurtlAPI, TurtlAPIService, TurtlEndpoint, TurtlRequestModel, TurtlResponse };
 //# sourceMappingURL=turtl-js-api.mjs.map
