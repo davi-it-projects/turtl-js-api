@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.5.1...v0.6.0) (2025-09-19)
+
+
+### Features
+
+* add mock response handling to TurtlAPI and TurtlEndpoint ([1901a7a](https://github.com/davi-it-projects/turtl-js-api/commit/1901a7a3657528dcf7e5af156c083424a010c6d9))
+
 ## [0.5.1](https://github.com/davi-it-projects/turtl-js-api/compare/v0.5.0...v0.5.1) (2025-09-05)
 
 
