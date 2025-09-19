@@ -43,22 +43,7 @@ class TurtlAPI {
             }
             return TurtlResponse.Success();
         });
-        // Deprecated: Use "typeOf" rule instead.
-        this.registerValidationRule("string", (value, instance, options) => {
-            console.warn("[TurtlAPI] Validation rule 'string' is deprecated. Use 'typeOf' instead.");
-            if (value !== undefined && typeof value !== "string") {
-                return TurtlResponse.Error("Must be a string.");
-            }
-            return TurtlResponse.Success();
-        });
-        // Deprecated: Use "typeOf" rule instead.
-        this.registerValidationRule("number", (value, instance, options) => {
-            console.warn("[TurtlAPI] Validation rule 'number' is deprecated. Use 'typeOf' instead.");
-            if (value !== undefined && typeof value !== "number") {
-                return TurtlResponse.Error("Must be a number.");
-            }
-            return TurtlResponse.Success();
-        });
+
         this.registerValidationRule("minLength", (value, instance, options) => {
             if (value !== undefined && typeof value === "string") {
                 if (value.length < (options.length || 0)) {
@@ -193,7 +178,7 @@ class TurtlAPI {
             if (mockResult) {
                 // If endpoint has a mockResponse, use it
                 if (typeof endpoint.mockResponseSuccess === "function") {
-                    return await endpoint.mockResponseSuccess(model, service, endpoint, this);
+                    return await endpoint.mockResponseSuccess(model);
                 }
                 if (endpoint.mockResponseSuccess !== undefined) {
                     return typeof endpoint.mockResponseSuccess.then === "function"
@@ -206,7 +191,7 @@ class TurtlAPI {
             else {
                 // If endpoint has a mockResponseFailure, use it
                 if (typeof endpoint.mockResponseFailure === "function") {
-                    return await endpoint.mockResponseFailure(model, service, endpoint, this);
+                    return await endpoint.mockResponseFailure(model);
                 }
                 if (endpoint.mockResponseFailure !== undefined) {
                     return typeof endpoint.mockResponseFailure.then === "function"
@@ -234,8 +219,19 @@ class TurtlAPI {
         }
     }
 
-    addService(name, service) {
-        this.services.set(name, service);
+    addService(nameOrService, maybeService) {
+        if (maybeService !== undefined) {
+            // Deprecated usage: (name, service)
+            console.warn("[TurtlAPI] addService(name, service) is deprecated. Use addService(service) instead.");
+            this.services.set(nameOrService, maybeService);
+        } else {
+            // New usage: (service)
+            const service = nameOrService;
+            if (!service || !service.name) {
+                throw new Error("Service must have a 'name' property.");
+            }
+            this.services.set(service.name, service);
+        }
     }
 
     getService(name) {

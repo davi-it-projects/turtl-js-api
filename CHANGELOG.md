@@ -1,3 +1,10 @@
+## [0.6.1](https://github.com/davi-it-projects/turtl-js-api/compare/v0.6.0...v0.6.1) (2025-09-19)
+
+
+### Bug Fixes
+
+* simplify mock response handling by removing unnecessary parameters ([8f311ef](https://github.com/davi-it-projects/turtl-js-api/commit/8f311ef9c8dca5604651f9d8ae3ab44881664c86))
+
 # [0.6.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.5.1...v0.6.0) (2025-09-19)
 
 
