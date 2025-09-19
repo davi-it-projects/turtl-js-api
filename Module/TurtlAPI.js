@@ -21,22 +21,7 @@ export class TurtlAPI {
             }
             return TurtlResponse.Success();
         });
-        // Deprecated: Use "typeOf" rule instead.
-        this.registerValidationRule("string", (value, instance, options) => {
-            console.warn("[TurtlAPI] Validation rule 'string' is deprecated. Use 'typeOf' instead.");
-            if (value !== undefined && typeof value !== "string") {
-                return TurtlResponse.Error("Must be a string.");
-            }
-            return TurtlResponse.Success();
-        });
-        // Deprecated: Use "typeOf" rule instead.
-        this.registerValidationRule("number", (value, instance, options) => {
-            console.warn("[TurtlAPI] Validation rule 'number' is deprecated. Use 'typeOf' instead.");
-            if (value !== undefined && typeof value !== "number") {
-                return TurtlResponse.Error("Must be a number.");
-            }
-            return TurtlResponse.Success();
-        });
+
         this.registerValidationRule("minLength", (value, instance, options) => {
             if (value !== undefined && typeof value === "string") {
                 if (value.length < (options.length || 0)) {
