@@ -9,7 +9,8 @@ import {
 // Create the API instance
 const api = new TurtlAPI({
     host: "http://jsmodule.local/APIModule/usage/debugAPI",
-    getAuthToken: () => localStorage.getItem("SessionKey")
+    getAuthToken: () => localStorage.getItem("SessionKey"),
+    mock: true
 });
 
 // =-=-=-= REGISTER VALIDATION RULES =-=-=-=
@@ -39,7 +40,9 @@ accountService.addEndpoint("login", {
     path: "/login.php",
     method: "POST",
     modelName: "login",
-    requiresAuth: false
+    requiresAuth: false,
+    mockResponseSuccess: (model) => TurtlResponse.Success("Mock login", { user: { id: 1, email: model.email, name: "Mock User" } }),
+    mockResponseFailure: () => TurtlResponse.Error("Mock login failure")
 });
 
 api.addService("account", accountService);
@@ -66,6 +69,7 @@ console.log("invalid input", invalidResponse);
 const correctResponse = await api.call("account.login", {
     email: "debug@example.com",
     password: "debugpass"
-});
+}
+);
 
 console.log("correct", correctResponse);

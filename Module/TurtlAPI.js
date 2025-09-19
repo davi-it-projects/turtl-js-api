@@ -1,11 +1,12 @@
 import { TurtlResponse } from "./TurtlResponse.js";
 
 export class TurtlAPI {
-    constructor({ host, getAuthToken = null }) {
+    constructor({ host, getAuthToken = null, mock = false }) {
         this.host = host;
         this.getAuthToken = getAuthToken;
         this.services = new Map();
         this.validationRules = new Map();
+        this.mock = mock;
 
         // Register built-in validation rules
         this.registerValidationRule("required", (value, instance, options) => {
@@ -135,7 +136,7 @@ export class TurtlAPI {
         });
     }
 
-    async call(fullName, modelOrData) {
+    async call(fullName, modelOrData, mockResult = true) {
         const data = this.#getDataFromFullName(fullName);
         if (data.Failed) {
             return data.Response;
@@ -145,27 +146,56 @@ export class TurtlAPI {
 
         const isModel = modelOrData && modelOrData._schema && typeof modelOrData._schema === "object";
         return isModel
-            ? await this.#callWithModel(modelOrData, service, endpoint)
-            : await this.#callWithData(modelOrData, service, endpoint);
+            ? await this.#callWithModel(modelOrData, service, endpoint, mockResult)
+            : await this.#callWithData(modelOrData, service, endpoint, mockResult);
     }
 
-    async #callWithData(data, service, endpoint) {
+    async #callWithData(data, service, endpoint, mockResult = true) {
         const modelFactory = service.getModel(endpoint.modelName);
         if (modelFactory && modelFactory.create && typeof modelFactory.create === "function") {
             const requestModel = modelFactory.create(data, this); // Inject api here
-            return await this.#callWithModel(requestModel, service, endpoint);
+            return await this.#callWithModel(requestModel, service, endpoint, mockResult);
         }
         return TurtlResponse.Error("Invalid data");
     }
 
-    async #callWithModel(requestModel, service, endpoint) {
+    async #callWithModel(requestModel, service, endpoint, mockResult = true) {
         if (!requestModel.isValid) {
             return requestModel.validateResult;
         }
-        return await this.#sendRequest(requestModel, service, endpoint);
+        return await this.#sendRequest(requestModel, service, endpoint, mockResult);
     }
 
-    async #sendRequest(model, service, endpoint) {
+    async #sendRequest(model, service, endpoint, mockResult = true) {
+        if (this.mock) {
+            if (mockResult) {
+                // If endpoint has a mockResponse, use it
+                if (typeof endpoint.mockResponseSuccess === "function") {
+                    return await endpoint.mockResponseSuccess(model, service, endpoint, this);
+                }
+                if (endpoint.mockResponseSuccess !== undefined) {
+                    return typeof endpoint.mockResponseSuccess.then === "function"
+                        ? await endpoint.mockResponseSuccess
+                        : endpoint.mockResponseSuccess;
+                }
+                // Default mock response
+                return TurtlResponse.Success("Mocked response", {});
+            }
+            else {
+                // If endpoint has a mockResponseFailure, use it
+                if (typeof endpoint.mockResponseFailure === "function") {
+                    return await endpoint.mockResponseFailure(model, service, endpoint, this);
+                }
+                if (endpoint.mockResponseFailure !== undefined) {
+                    return typeof endpoint.mockResponseFailure.then === "function"
+                        ? await endpoint.mockResponseFailure
+                        : endpoint.mockResponseFailure;
+                }
+                // Default mock failure response
+                return TurtlResponse.Error("Mocked failure response");
+            }
+        }
+
         const url = `${this.host}${service.basePath}${endpoint.path}`;
         const method = endpoint.method;
 

@@ -41,6 +41,8 @@ const api = new TurtlAPI({
     getAuthToken: () => localStorage.getItem("SessionKey") // or any other method
 });
 ```
+-- mock can be enabled by also giving the value ```mock: true```  this returns the mock response instead of calling the actual api
+
 2. Define a Service
 ```js
 const accountService = new TurtlAPIService("account", "/account");
@@ -68,6 +70,13 @@ accountService.addEndpoint("login", {
     requiresAuth: false
 });
 ```
+-- an endpoint can be given 2 mock responses, a succesfull one and a failed one. these are used when mock is enabled
+
+```js
+mockResponseSuccess: (model) => TurtlResponse.Success("Mock login", { user: { id: 1, email: model.email, name: "Mock User" } }),
+mockResponseFailure: () => TurtlResponse.Error("Mock login failure")
+```
+
 5. Register the Service with the API
 ```js
 api.addService("account", accountService);
@@ -81,6 +90,9 @@ const request = api.createRequest("account.login", {
 
 const response = await api.call("account.login", request);
 ```
+-- in case mocking is enabled it will default to trying to return the succesfull mock result in the endpoint, useing ```api.call("...",{},false)``` will make it return a failed response
+
+-- default succes or failure responses are given in mock mode when no mock model is defined
 
 
 # ✅ Validation Rules Reference
