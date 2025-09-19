@@ -156,7 +156,7 @@ export class TurtlAPI {
             if (mockResult) {
                 // If endpoint has a mockResponse, use it
                 if (typeof endpoint.mockResponseSuccess === "function") {
-                    return await endpoint.mockResponseSuccess(model, service, endpoint, this);
+                    return await endpoint.mockResponseSuccess(model);
                 }
                 if (endpoint.mockResponseSuccess !== undefined) {
                     return typeof endpoint.mockResponseSuccess.then === "function"
@@ -169,7 +169,7 @@ export class TurtlAPI {
             else {
                 // If endpoint has a mockResponseFailure, use it
                 if (typeof endpoint.mockResponseFailure === "function") {
-                    return await endpoint.mockResponseFailure(model, service, endpoint, this);
+                    return await endpoint.mockResponseFailure(model);
                 }
                 if (endpoint.mockResponseFailure !== undefined) {
                     return typeof endpoint.mockResponseFailure.then === "function"
