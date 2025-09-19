@@ -45,7 +45,7 @@ accountService.addEndpoint("login", {
     mockResponseFailure: () => TurtlResponse.Error("Mock login failure")
 });
 
-api.addService("account", accountService);
+api.addService(accountService);
 
 // =-=-=-= INCORRECT LOGIN =-=-=-=
 const request = api.createRequest("account.login", {

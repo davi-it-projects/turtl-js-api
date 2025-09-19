@@ -212,8 +212,19 @@ export class TurtlAPI {
         }
     }
 
-    addService(name, service) {
-        this.services.set(name, service);
+    addService(nameOrService, maybeService) {
+        if (maybeService !== undefined) {
+            // Deprecated usage: (name, service)
+            console.warn("[TurtlAPI] addService(name, service) is deprecated. Use addService(service) instead.");
+            this.services.set(nameOrService, maybeService);
+        } else {
+            // New usage: (service)
+            const service = nameOrService;
+            if (!service || !service.name) {
+                throw new Error("Service must have a 'name' property.");
+            }
+            this.services.set(service.name, service);
+        }
     }
 
     getService(name) {

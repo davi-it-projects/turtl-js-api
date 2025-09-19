@@ -79,7 +79,7 @@ mockResponseFailure: () => TurtlResponse.Error("Mock login failure")
 
 5. Register the Service with the API
 ```js
-api.addService("account", accountService);
+api.addService(accountService);
 ```
 6. Make Requests
 ```js
