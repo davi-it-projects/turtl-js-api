@@ -57,10 +57,11 @@ accountService.addModel("login", TurtlRequestModel.createFactory({
     ],
     password: [
         { rule: "required" },
-        { rule: "string" }
+        { rule: "typeOf", options: { type: "string" } }
     ]
 }));
 ```
+-- some rules allow error messages to be overridden, see rules for details  
 4. Define Endpoints
 ```js
 accountService.addEndpoint("login", {
@@ -116,6 +117,14 @@ TurtlAPI.listValidationRules() // returns a array of the rule names
 ```
 
 ## Built-in Rules
+
+some rules allow some of its errors to be overriden
+with ```options: { errors: ["first overridden message", "second overridden message"]}```
+if you only want to override the second message set errors to `["","new second message"]`
+-- note that overridden messages cant use `${}`
+
+
+
 `required`
 
 Ensures the field is not undefined, null, or an empty string.
@@ -125,6 +134,9 @@ Ensures the field is not undefined, null, or an empty string.
 Fails when:
 
     The value is undefined, null, or "".
+
+overridable error messages:  
+1.  "Field is required." 
 
 `email`
 
@@ -136,15 +148,8 @@ Fails when:
 
     The value is a string but not in valid email format like "user@example.com".
 
-`typeOf`
-
-Ensures the value is of a given type
-```
-{ rule: "typeOf", options: { type: "string"}}
-```
-Fails when:
-
-    The value si of a diffrent type
+overridable error messages:
+1. "Must be a valid email."
 
 `minLength`
 
@@ -156,7 +161,25 @@ Fails when:
 
     The value is a string shorter than the specified length.
 
+overridable error messages:
+1. `Minimum length is ${options.length}.` -- note that overridden messages cant use `${}`
+
+`typeOf`
+
+Ensures the value is of a given type
+```
+{ rule: "typeOf", options: { type: "string"}}
+```
+Fails when:
+
+    The value si of a diffrent type
+
 Note: Has no effect if the value is undefined.
+
+overridable error messages:
+1. `Value must be of type '${type}', but got '${typeof value}'.` -- note that overridden messages cant use `${}`
+
+
 `arrayOf`
 
 Validates the field is an array of items with a specific primitive type or class instance.
@@ -173,6 +196,11 @@ Fails when:
 
     The items do not match the expected type
 
+overridable error messages:
+1. "Value must be an array."
+2. `Array item must be an instance of '${type.name}', but got '${typeof item}'.` -- note that overridden messages cant use `${}`
+3. `Array item must be of type '${type}', but got '${typeof item}'.` -- note that overridden messages cant use `${}`
+
 `instanceOf`
 
 Validates the field is an instance of a given class.
@@ -183,6 +211,10 @@ Fails when:
 
     The value is not an instance of the provided constructor/class.
 
+overridable error message:
+1. `Value must be an instance of '${type.name}', but got '${typeof value}'.` -- note that overridden messages cant use `${}`
+2. `Value must be of type '${type}', but got '${typeof value}'.` -- note that overridden messages cant use `${}`
+
 ## Custom Rules
 You can register your own rules using:
 ```js
@@ -190,6 +222,9 @@ api.registerValidationRule("myRule", (value, instance, options) => {
     // return TurtlResponse.Success() or TurtlResponse.Error("message")
 });
 ```
+adding overridable errors can be done by changhing the message from `"message"` to `instance.getErrorMessage(index,"default message",options)`
+index starts at 0
+
 `"myRule"` is the name of the rule  
 `value` this variable contains the value of the vield the rule is being run on  
 `instance` the full request object, usefull for when you want to do complex validation (for example cross field vallidation)

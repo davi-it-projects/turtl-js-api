@@ -12,14 +12,14 @@ export class TurtlAPI {
         this.registerValidationRule("required", (value, instance, options) => {
             if (value === undefined || value === null || value === "") {
                 return TurtlResponse.Error(
-                    (options && Array.isArray(options.errors) && options.errors.length > 0 && options.errors[0]) || "Field is required."
+                    instance.getErrorMessage(0, "Field is required.", options)
                 );
             }
             return TurtlResponse.Success();
         });
         this.registerValidationRule("email", (value, instance, options) => {
             if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                return TurtlResponse.Error((options && Array.isArray(options.errors) && options.errors.length > 0 && options.errors[0]) || "Must be a valid email.");
+                return TurtlResponse.Error(instance.getErrorMessage(0, "Must be a valid email.", options));
             }
             return TurtlResponse.Success();
         });
@@ -27,51 +27,51 @@ export class TurtlAPI {
         this.registerValidationRule("minLength", (value, instance, options) => {
             if (value !== undefined && typeof value === "string") {
                 if (value.length < (options.length || 0)) {
-                    return TurtlResponse.Error((options && Array.isArray(options.errors) && options.errors.length > 0 && options.errors[0]) || `Minimum length is ${options.length}.`);
+                    return TurtlResponse.Error(instance.getErrorMessage(0, `Minimum length is ${options.length}.`, options));
                 }
             }
             return TurtlResponse.Success();
         });
-        this.registerValidationRule("arrayOf", (value, _instance, options) => {
+        this.registerValidationRule("arrayOf", (value, instance, options) => {
             const { type, isTypeClass = false } = options || {};
             if (!Array.isArray(value)) {
-                return TurtlResponse.Error((options && Array.isArray(options.errors) && options.errors.length > 0 && options.errors[0]) || "Value must be an array.");
+                return TurtlResponse.Error(instance.getErrorMessage(0, "Value must be an array.", options));
             }
             if (!type) {
-                return TurtlResponse.Error((options && Array.isArray(options.errors) && options.errors.length > 1 && options.errors[1]) || "No type specified for arrayOf rule.");
+                return TurtlResponse.Error("No type specified for arrayOf rule.");
             }
             for (const item of value) {
                 if (isTypeClass) {
                     // Check if item is an instance of the specified class
                     if (!(item instanceof type)) {
-                        return TurtlResponse.Error((options && Array.isArray(options.errors) && options.errors.length > 2 && options.errors[2]) || `Array item must be an instance of '${type.name}', but got '${typeof item}'.`);
+                        return TurtlResponse.Error(instance.getErrorMessage(2, `Array item must be an instance of '${type.name}', but got '${typeof item}'.`, options));
                     }
                 } else {
                     // Check if item is of the specified type
                     if (typeof item !== type) {
-                        return TurtlResponse.Error((options && Array.isArray(options.errors) && options.errors.length > 3 && options.errors[3]) || `Array item must be of type '${type}', but got '${typeof item}'.`);
+                        return TurtlResponse.Error(instance.getErrorMessage(3, `Array item must be of type '${type}', but got '${typeof item}'.`, options));
                     }
                 }
             }
             return TurtlResponse.Success();
         });
-        this.registerValidationRule("instanceOf", (value, _instance, options) => {
-            const { type } = options || {};
+        this.registerValidationRule("instanceOf", (value, instance, options) => {
+            const type = options.type || null;
             if (!type) {
-                return TurtlResponse.Error((options && Array.isArray(options.errors) && options.errors.length > 0 && options.errors[0]) || "No type specified for InstanceOf rule.");
+                return TurtlResponse.Error("No type specified for InstanceOf rule.");
             }
             if (!(value instanceof type)) {
-                return TurtlResponse.Error((options && Array.isArray(options.errors) && options.errors.length > 1 && options.errors[1]) || `Value must be an instance of '${type.name}', but got '${typeof value}'.`);
+                return TurtlResponse.Error(instance.getErrorMessage(0, `Value must be an instance of '${type.name}', but got '${typeof value}'.`, options));
             }
             return TurtlResponse.Success();
         });
-        this.registerValidationRule("typeOf", (value, _instance, options) => {
+        this.registerValidationRule("typeOf", (value, instance, options) => {
             const type = options.type || null;
             if (!type) {
-                return TurtlResponse.Error((options && Array.isArray(options.errors) && options.errors.length > 0 && options.errors[0]) || "No type specified for TypeOf rule.");
+                return TurtlResponse.Error("No type specified for TypeOf rule.");
             }
             if (typeof value !== type) {
-                return TurtlResponse.Error((options && Array.isArray(options.errors) && options.errors.length > 1 && options.errors[1]) || `Value must be of type '${type}', but got '${typeof value}'.`);
+                return TurtlResponse.Error(instance.getErrorMessage(0, `Value must be of type '${type}', but got '${typeof value}'.`, options));
             }
             return TurtlResponse.Success();
         });

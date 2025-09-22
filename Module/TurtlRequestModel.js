@@ -24,6 +24,12 @@ export class TurtlRequestModel {
     }
 
     static validateFields(schema, instance, api) {
+        if (!instance.getErrorMessage) {
+            instance.getErrorMessage = (i, d, o) => {
+                const errorMessages = o?.errors || [];
+                return Array.isArray(errorMessages) && errorMessages.length > i && errorMessages[i] || d;
+            };
+        }
         for (const key in schema) {
             const rulesArray = schema[key];
             const value = instance[key];
@@ -51,10 +57,15 @@ export class TurtlRequestModel {
         return TurtlResponse.Success();
     }
 
+    getErrorMessage(index, defaultMessage, options) {
+        const errorMessages = options?.errors || [];
+        return Array.isArray(errorMessages) && errorMessages.length > index && errorMessages[index] || defaultMessage;
+    }
+
     toDataObject() {
         const cleaned = {};
         for (const key in this) {
-            if (!["_schema", "_customValidator", "_api", "validateResult", "isValid"].includes(key)) {
+            if (!["_schema", "_customValidator", "_api", "validateResult", "isValid", "getErrorMessage"].includes(key)) {
                 cleaned[key] = this[key];
             }
         }
