@@ -1,3 +1,10 @@
+## [0.6.2](https://github.com/davi-it-projects/turtl-js-api/compare/v0.6.1...v0.6.2) (2025-09-22)
+
+
+### Bug Fixes
+
+* enhance error messages in validation rules to support custom options ([dadf478](https://github.com/davi-it-projects/turtl-js-api/commit/dadf4783ba3c2cbaafb1ffa96e6a1d8f8b1d92a0))
+
 ## [0.6.1](https://github.com/davi-it-projects/turtl-js-api/compare/v0.6.0...v0.6.1) (2025-09-19)
 
 
