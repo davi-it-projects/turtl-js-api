@@ -29,6 +29,7 @@ class TurtlAPI {
         this.services = new Map();
         this.validationRules = new Map();
         this.mock = mock;
+        this.headers = new Map();
 
         // Register built-in validation rules
         this.registerValidationRule("required", (value, instance, options) => {
@@ -156,6 +157,12 @@ class TurtlAPI {
         }
         const service = data.Service;
         const endpoint = data.Endpoint;
+
+        for (const [key, value] of this.headers) {
+            if ((key in endpoint.headers) == false) {
+                endpoint.headers[key] = value;
+            }
+        }
 
         const isModel = modelOrData && modelOrData._schema && typeof modelOrData._schema === "object";
         return isModel
@@ -286,6 +293,13 @@ class TurtlAPI {
             throw error;
         }
     }
+
+    addHeader(name, value) {
+        this.headers.set(name, value);
+    }
+    getHeaders() {
+        return this.headers;
+    }
 }
 
 class TurtlEndpoint {
@@ -388,6 +402,7 @@ class TurtlAPIService {
         this.basePath = basePath;
         this.endpoints = new Map();
         this.Models = new Map();
+        this.headers = new Map();
 
         // Add default models
         this.addModel('empty', TurtlRequestModel.createFactory({}));
@@ -402,7 +417,15 @@ class TurtlAPIService {
     }
 
     getEndpoint(name) {
-        return this.endpoints.get(name);
+        let endpoint = this.endpoints.get(name);
+        console.log(endpoint);
+        console.log(this.headers);
+        for (const [key, value] of this.headers) {
+            if ((key in endpoint.headers) == false) {
+                endpoint.headers[key] = value;
+            }
+        }
+        return endpoint
     }
 
     addModel(name, model) {
@@ -414,6 +437,13 @@ class TurtlAPIService {
 
     getModel(name) {
         return this.Models.get(name);
+    }
+
+    addHeader(name, value) {
+        this.headers.set(name, value);
+    }
+    getHeaders() {
+        return this.headers;
     }
 }
 
