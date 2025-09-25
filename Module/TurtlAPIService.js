@@ -7,6 +7,7 @@ export class TurtlAPIService {
         this.basePath = basePath;
         this.endpoints = new Map();
         this.Models = new Map();
+        this.headers = new Map();
 
         // Add default models
         this.addModel('empty', TurtlRequestModel.createFactory({}));
@@ -21,7 +22,15 @@ export class TurtlAPIService {
     }
 
     getEndpoint(name) {
-        return this.endpoints.get(name);
+        let endpoint = this.endpoints.get(name);
+        console.log(endpoint)
+        console.log(this.headers)
+        for (const [key, value] of this.headers) {
+            if ((key in endpoint.headers) == false) {
+                endpoint.headers[key] = value
+            }
+        }
+        return endpoint
     }
 
     addModel(name, model) {
@@ -33,5 +42,12 @@ export class TurtlAPIService {
 
     getModel(name) {
         return this.Models.get(name);
+    }
+
+    addHeader(name, value) {
+        this.headers.set(name, value);
+    }
+    getHeaders() {
+        return this.headers;
     }
 }

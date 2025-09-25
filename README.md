@@ -75,6 +75,8 @@ accountService.addEndpoint("login", {
 -- an endpoint can be given 2 mock responses, a succesfull one and a failed one. these are used when mock is enabled
 headers is optional
 authentication is send via header `Authorization` with value `Bearer {token}`
+headers can be set service wide or api wide with `addHeader('header','value)`
+header value in endpoints take priority over service and service takes priority over api wide
 
 ```js
 mockResponseSuccess: (model) => TurtlResponse.Success("Mock login", { user: { id: 1, email: model.email, name: "Mock User" } }),

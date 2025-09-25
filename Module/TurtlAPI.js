@@ -7,6 +7,7 @@ export class TurtlAPI {
         this.services = new Map();
         this.validationRules = new Map();
         this.mock = mock;
+        this.headers = new Map();
 
         // Register built-in validation rules
         this.registerValidationRule("required", (value, instance, options) => {
@@ -134,6 +135,12 @@ export class TurtlAPI {
         }
         const service = data.Service;
         const endpoint = data.Endpoint;
+
+        for (const [key, value] of this.headers) {
+            if ((key in endpoint.headers) == false) {
+                endpoint.headers[key] = value
+            }
+        }
 
         const isModel = modelOrData && modelOrData._schema && typeof modelOrData._schema === "object";
         return isModel
@@ -263,5 +270,12 @@ export class TurtlAPI {
         } catch (error) {
             throw error;
         }
+    }
+
+    addHeader(name, value) {
+        this.headers.set(name, value);
+    }
+    getHeaders() {
+        return this.headers;
     }
 }
