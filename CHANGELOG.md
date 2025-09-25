@@ -1,3 +1,10 @@
+# [0.8.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.7.0...v0.8.0) (2025-09-25)
+
+
+### Features
+
+* allow custom headers on endpoints ([a28b2f5](https://github.com/davi-it-projects/turtl-js-api/commit/a28b2f59f59212a43413978856e0a3795759ba11))
+
 # [0.7.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.6.2...v0.7.0) (2025-09-22)
 
 

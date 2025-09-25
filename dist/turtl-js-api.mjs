@@ -115,7 +115,7 @@ class TurtlAPI {
         return Array.from(this.validationRules.keys());
     }
 
-    static async sendRequest(method, url, body, requiresAuth, getAuthToken) {
+    static async sendRequest(method, url, body, requiresAuth, getAuthToken, headers = {}) {
         return new Promise((resolve) => {
             const xhr = new XMLHttpRequest();
             xhr.open(method, url);
@@ -129,6 +129,10 @@ class TurtlAPI {
                     resolve(TurtlResponse.Error("Authentication required."));
                     return;
                 }
+            }
+
+            for (const key in headers) {
+                xhr.setRequestHeader(key, headers[key]);
             }
 
             xhr.onload = () => {
@@ -207,14 +211,15 @@ class TurtlAPI {
 
         const url = `${this.host}${service.basePath}${endpoint.path}`;
         const method = endpoint.method;
-
+        const headers = endpoint.headers || {};
         try {
             return await TurtlAPI.sendRequest(
                 method,
                 url,
                 model.toDataObject(),
                 endpoint.requiresAuth,
-                this.getAuthToken
+                this.getAuthToken,
+                headers
             );
         } catch (error) {
             return TurtlResponse.Error("Request failed");
@@ -284,7 +289,7 @@ class TurtlAPI {
 }
 
 class TurtlEndpoint {
-    constructor({ name, path, method = "POST", modelName, requiresAuth = false, mockResponseSuccess = null, mockResponseFailure = null }) {
+    constructor({ name, path, method = "POST", modelName, requiresAuth = false, mockResponseSuccess = null, mockResponseFailure = null, headers = {} }) {
         this.name = name;
         this.path = path;
         this.method = method;
@@ -292,6 +297,7 @@ class TurtlEndpoint {
         this.requiresAuth = requiresAuth;
         this.mockResponseSuccess = mockResponseSuccess;
         this.mockResponseFailure = mockResponseFailure;
+        this.headers = headers;
     }
 }
 
