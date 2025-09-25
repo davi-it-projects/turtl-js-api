@@ -68,10 +68,13 @@ accountService.addEndpoint("login", {
     path: "/login.php",
     method: "POST",
     modelName: "login",
-    requiresAuth: false
+    requiresAuth: false,
+    headers: {'custom-Header':'value'}
 });
 ```
 -- an endpoint can be given 2 mock responses, a succesfull one and a failed one. these are used when mock is enabled
+headers is optional
+authentication is send via header `Authorization` with value `Bearer {token}`
 
 ```js
 mockResponseSuccess: (model) => TurtlResponse.Success("Mock login", { user: { id: 1, email: model.email, name: "Mock User" } }),

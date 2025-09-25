@@ -1,5 +1,5 @@
 export class TurtlEndpoint {
-    constructor({ name, path, method = "POST", modelName, requiresAuth = false, mockResponseSuccess = null, mockResponseFailure = null }) {
+    constructor({ name, path, method = "POST", modelName, requiresAuth = false, mockResponseSuccess = null, mockResponseFailure = null, headers = {} }) {
         this.name = name;
         this.path = path;
         this.method = method;
@@ -7,5 +7,6 @@ export class TurtlEndpoint {
         this.requiresAuth = requiresAuth;
         this.mockResponseSuccess = mockResponseSuccess;
         this.mockResponseFailure = mockResponseFailure;
+        this.headers = headers;
     }
 }
