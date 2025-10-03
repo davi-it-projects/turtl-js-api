@@ -142,10 +142,13 @@ export class TurtlAPI {
             }
         }
 
-        const isModel = modelOrData && modelOrData._schema && typeof modelOrData._schema === "object";
-        return isModel
-            ? await this.#callWithModel(modelOrData, service, endpoint, mockResult)
-            : await this.#callWithData(modelOrData, service, endpoint, mockResult);
+        const isModel = modelOrData._schema != undefined && typeof modelOrData._schema === "object";
+        if (isModel) {
+            return await this.#callWithModel(modelOrData, service, endpoint, mockResult);
+        }
+        else {
+            return await this.#callWithData(modelOrData, service, endpoint, mockResult);
+        }
     }
 
     async #callWithData(data, service, endpoint, mockResult = true) {

@@ -23,8 +23,6 @@ export class TurtlAPIService {
 
     getEndpoint(name) {
         let endpoint = this.endpoints.get(name);
-        console.log(endpoint)
-        console.log(this.headers)
         for (const [key, value] of this.headers) {
             if ((key in endpoint.headers) == false) {
                 endpoint.headers[key] = value
