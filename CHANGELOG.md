@@ -1,3 +1,10 @@
+## [0.9.1](https://github.com/davi-it-projects/turtl-js-api/compare/v0.9.0...v0.9.1) (2025-10-03)
+
+
+### Bug Fixes
+
+* cleanup and improve check ([97382f2](https://github.com/davi-it-projects/turtl-js-api/commit/97382f2106e576646ee8793a571b14f5e90955de))
+
 # [0.9.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.8.0...v0.9.0) (2025-09-25)
 
 
