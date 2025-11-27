@@ -1,3 +1,11 @@
+## [0.9.2](https://github.com/davi-it-projects/turtl-js-api/compare/v0.9.1...v0.9.2) (2025-11-27)
+
+
+### Bug Fixes
+
+* set default mock result to false ([59ee03e](https://github.com/davi-it-projects/turtl-js-api/commit/59ee03e73eb163bdc59b2484125c3ab3dcca1dc5))
+* setup defaults for empty model and empty call data ([f7a9217](https://github.com/davi-it-projects/turtl-js-api/commit/f7a92173fd5ca6ba5bf16711e19b8c05db8fcc2c))
+
 ## [0.9.1](https://github.com/davi-it-projects/turtl-js-api/compare/v0.9.0...v0.9.1) (2025-10-03)
 
 
