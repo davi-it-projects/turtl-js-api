@@ -1,3 +1,10 @@
+## [0.9.5](https://github.com/davi-it-projects/turtl-js-api/compare/v0.9.4...v0.9.5) (2025-11-27)
+
+
+### Bug Fixes
+
+* rollup .d.ts files ([61801d1](https://github.com/davi-it-projects/turtl-js-api/commit/61801d1b641f9b112148f84946150481713924d7))
+
 ## [0.9.4](https://github.com/davi-it-projects/turtl-js-api/compare/v0.9.3...v0.9.4) (2025-11-27)
 
 
