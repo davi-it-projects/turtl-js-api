@@ -1,3 +1,10 @@
+## [0.9.3](https://github.com/davi-it-projects/turtl-js-api/compare/v0.9.2...v0.9.3) (2025-11-27)
+
+
+### Bug Fixes
+
+* add type definition ([2452681](https://github.com/davi-it-projects/turtl-js-api/commit/2452681f47b452f3af2e49539bc20c8ec4fd3378))
+
 ## [0.9.2](https://github.com/davi-it-projects/turtl-js-api/compare/v0.9.1...v0.9.2) (2025-11-27)
 
 
