@@ -2,6 +2,13 @@ import { TurtlEndpoint } from "./TurtlEndpoint.js";
 import { TurtlRequestModel } from "./TurtlRequestModel.js";
 
 export class TurtlAPIService {
+  /**
+   * Creates an instance of TurtlAPIService.
+   *
+   * @constructor
+   * @param {string} name - service name
+   * @param {string} basePath - base path for the service
+   */
   constructor(name, basePath) {
     this.name = name;
     this.basePath = basePath;
@@ -13,6 +20,12 @@ export class TurtlAPIService {
     this.addModel("empty", TurtlRequestModel.createFactory({}));
   }
 
+  /**
+   * Add an endpoint to the service
+   *
+   * @param {string} name - endpoint name
+   * @param {object} config - endpoint configuration
+   */
   addEndpoint(name, config) {
     const endpoint = new TurtlEndpoint({ ...config, name });
     if (!this.Models.has(endpoint.modelName)) {
@@ -21,6 +34,12 @@ export class TurtlAPIService {
     this.endpoints.set(name, endpoint);
   }
 
+  /**
+   * Gets a endpoint by name
+   *
+   * @param {string} name - endpoint name
+   * @returns {object} - endpoint configuration with Service headers applied
+   */
   getEndpoint(name) {
     let endpoint = this.endpoints.get(name);
     for (const [key, value] of this.headers) {
@@ -31,6 +50,12 @@ export class TurtlAPIService {
     return endpoint;
   }
 
+  /**
+   * Add a model to the Service
+   *
+   * @param {string} name - model name
+   * @param {TurtlRequestModel} model - model class
+   */
   addModel(name, model) {
     if (this.Models.has(name)) {
       throw new Error(`Request model '${name}' already exists`);
@@ -38,13 +63,31 @@ export class TurtlAPIService {
     this.Models.set(name, model);
   }
 
+  /**
+   * Get a model by a name
+   *
+   * @param {string} name - model name
+   * @returns {TurtlRequestModel} - model class
+   */
   getModel(name) {
     return this.Models.get(name);
   }
 
+  /**
+   * Add header to the Service
+   *
+   * @param {string} name - header name
+   * @param {string} value - header value
+   */
   addHeader(name, value) {
     this.headers.set(name, value);
   }
+
+  /**
+   * Get the Map of headers on this service
+   *
+   * @returns {Map<string,string>} - headers map
+   */
   getHeaders() {
     return this.headers;
   }

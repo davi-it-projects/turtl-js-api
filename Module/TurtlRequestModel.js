@@ -95,6 +95,13 @@ export class TurtlRequestModel {
     return cleaned;
   }
 
+  /**
+   * Creates a factory object for generating instances of TurtlRequestModel.
+   *
+   * @param {Object} schema - The schema definition for the request model.
+   * @param {Function|null} [customValidator=null] - Optional custom validation function.
+   * @returns {{create: function(Object=, Object=): TurtlRequestModel}} Factory object with a `create` method.
+   */
   static createFactory(schema, customValidator = null) {
     return {
       create(data = {}, api = null) {

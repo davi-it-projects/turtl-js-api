@@ -1,6 +1,30 @@
+import { TurtlAPIService } from "./TurtlAPIService.js";
+import { TurtlRequestModel } from "./TurtlRequestModel.js";
 import { TurtlResponse } from "./TurtlResponse.js";
 
 export class TurtlAPI {
+  /**
+   * Creates a new TurtlAPI instance with configuration and built-in validation rules.
+   *
+   * @param {Object} config - Configuration object
+   * @param {string} config.host - The API host URL
+   * @param {Function} [config.getAuthToken=null] - Optional function to retrieve authentication token
+   * @param {boolean} [config.mock=false] - Whether to use mock mode
+   *
+   * @description
+   * Initializes the TurtlAPI module with:
+   * - Service registry (Map)
+   * - Validation rules registry (Map)
+   * - Headers registry (Map)
+   *
+   * Registers the following built-in validation rules:
+   * - `required`: Validates that a field is not empty/null/undefined
+   * - `email`: Validates email format using regex pattern
+   * - `minLength`: Validates minimum string length
+   * - `arrayOf`: Validates array items match specified type (primitive or class instance)
+   * - `instanceOf`: Validates value is instance of specified class
+   * - `typeOf`: Validates value matches specified primitive type
+   */
   constructor({ host, getAuthToken = null, mock = false }) {
     this.host = host;
     this.getAuthToken = getAuthToken;
@@ -116,6 +140,12 @@ export class TurtlAPI {
     });
   }
 
+  /**
+   * Registers a new validation rule, overrides any rule that has the same name.
+   *
+   * @param {string} name - Name of the validation rule
+   * @param {CallableFunction} fn - Validation function, should return TurtlResponse in all cases
+   */
   registerValidationRule(name, fn) {
     if (name in this.validationRules) {
       console.warn(
@@ -126,15 +156,31 @@ export class TurtlAPI {
     this.validationRules.set(name, fn);
   }
 
+  /**
+   * Gets a validation rule by name.
+   *
+   * @param {string} name - Name of the validation rule
+   * @returns {CallableFunction} - The validation function
+   *
+   * @throws {Error} - If the validation rule is not found
+   */
   getValidationRule(name) {
+    if (!this.validationRules.has(name)) {
+      throw new Error(`Validation rule not found: ${name}`);
+    }
     return this.validationRules.get(name);
   }
 
+  /**
+   * Lists all registered validation rule
+   *
+   * @returns {string[]} - Array of validation rule names
+   */
   listValidationRules() {
     return Array.from(this.validationRules.keys());
   }
 
-  static async sendRequest(
+  static async #sendRequest(
     method,
     url,
     body,
@@ -177,6 +223,15 @@ export class TurtlAPI {
     });
   }
 
+  /**
+   * Call an endpoint
+   *
+   * @async
+   * @param {string} fullName - endpoint name in format of serviceName.Endpoint
+   * @param {{}} [modelOrData={}] - an object with data or model created with `TurtleAPI.CreateRequest`
+   * @param {boolean} [mockResult=false] - whether to return a mock success or failure response (only in mock mode)
+   * @returns {TurtlResponse} - response from the endpoint or error response
+   */
   async call(fullName, modelOrData = {}, mockResult = false) {
     const data = this.#getDataFromFullName(fullName);
     if (data.Failed) {
@@ -233,10 +288,15 @@ export class TurtlAPI {
     if (!requestModel.isValid) {
       return requestModel.validateResult;
     }
-    return await this.#sendRequest(requestModel, service, endpoint, mockResult);
+    return await this.#prepareSendRequest(
+      requestModel,
+      service,
+      endpoint,
+      mockResult
+    );
   }
 
-  async #sendRequest(model, service, endpoint, mockResult) {
+  async #prepareSendRequest(model, service, endpoint, mockResult) {
     if (this.mock) {
       if (mockResult) {
         // If endpoint has a mockResponse, use it
@@ -269,7 +329,7 @@ export class TurtlAPI {
     const method = endpoint.method;
     const headers = endpoint.headers || {};
     try {
-      return await TurtlAPI.sendRequest(
+      return await TurtlAPI.#sendRequest(
         method,
         url,
         model.toDataObject(),
@@ -282,23 +342,24 @@ export class TurtlAPI {
     }
   }
 
-  addService(nameOrService, maybeService) {
-    if (maybeService !== undefined) {
-      // Deprecated usage: (name, service)
-      console.warn(
-        "[TurtlAPI] addService(name, service) is deprecated. Use addService(service) instead."
-      );
-      this.services.set(nameOrService, maybeService);
-    } else {
-      // New usage: (service)
-      const service = nameOrService;
-      if (!service || !service.name) {
-        throw new Error("Service must have a 'name' property.");
-      }
-      this.services.set(service.name, service);
+  /**
+   * Add a new service to the api
+   *
+   * @param {TurtlAPIService} service
+   */
+  addService(service) {
+    if (!service || !service.name) {
+      throw new Error("Service must have a 'name' property.");
     }
+    this.services.set(service.name, service);
   }
 
+  /**
+   * Get a service by name
+   *
+   * @param {string} name - Name of the service
+   * @returns {TurtlAPIService} - The service instance
+   */
   getService(name) {
     return this.services.get(name);
   }
@@ -333,6 +394,13 @@ export class TurtlAPI {
     return output;
   }
 
+  /**
+   * Create and validate a request model before calling the endpoint
+   *
+   * @param {string} fullName - endpoint name in format of serviceName.Endpoint
+   * @param {object} data - data to populate the request model
+   * @returns {TurtlRequestModel | TurtlResponse} - The request model instance or error response
+   */
   createRequest(fullName, data) {
     try {
       const internal = this.#getDataFromFullName(fullName);
@@ -355,9 +423,21 @@ export class TurtlAPI {
     }
   }
 
+  /**
+   * Add a header to the global api header list
+   *
+   * @param {string} name - header name
+   * @param {string} value - header value
+   */
   addHeader(name, value) {
     this.headers.set(name, value);
   }
+
+  /**
+   * Returns the header map
+   *
+   * @returns {Map<string,string>} - headers map
+   */
   getHeaders() {
     return this.headers;
   }
