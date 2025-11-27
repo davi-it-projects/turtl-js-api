@@ -1,6 +1,38 @@
 import { TurtlEndpoint } from "./TurtlEndpoint.js";
 import { TurtlRequestModel } from "./TurtlRequestModel.js";
 
+/**
+ * TurtlAPIService manages API endpoints, request models, and headers for a service.
+ *
+ * @class
+ * @example
+ * const service = new TurtlAPIService('MyService', '/api');
+ * service.addModel('user', UserRequestModel.createFactory({}));
+ * service.addHeader('Authorization', 'Bearer token');
+ * service.addEndpoint('getUser', { path: '/user', method: 'GET', modelName: 'user' });
+ *
+ * @param {string} name - The name of the service.
+ * @param {string} basePath - The base path for the service.
+ *
+ * @property {string} name - The name of the service.
+ * @property {string} basePath - The base path for the service.
+ * @property {Map<string, TurtlEndpoint>} endpoints - Map of endpoint names to endpoint instances.
+ * @property {Map<string, TurtlRequestModel>} Models - Map of model names to request model factories.
+ * @property {Map<string, string>} headers - Map of header names to header values.
+ *
+ * @method addEndpoint(name: string, config: object): void
+ *   Adds an endpoint to the service.
+ * @method getEndpoint(name: string): TurtlEndpoint
+ *   Gets an endpoint by name, applying service headers.
+ * @method addModel(name: string, model: TurtlRequestModel): void
+ *   Adds a request model to the service.
+ * @method getModel(name: string): TurtlRequestModel
+ *   Gets a request model by name.
+ * @method addHeader(name: string, value: string): void
+ *   Adds a header to the service.
+ * @method getHeaders(): Map<string, string>
+ *   Gets the map of headers for the service.
+ */
 export class TurtlAPIService {
   /**
    * Creates an instance of TurtlAPIService.

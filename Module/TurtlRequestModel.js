@@ -1,5 +1,26 @@
 import { TurtlResponse } from "./TurtlResponse.js";
 
+/**
+ * Represents a request model with schema-based and custom validation.
+ *
+ * @class
+ * @param {Object} [data={}] - Initial data for the model instance.
+ * @param {Object} [schema={}] - Validation schema defining rules for each field.
+ * @param {Function|null} [customValidator=null] - Optional custom validation function.
+ * @param {Object|null} [api=null] - Optional API object providing validation rule functions.
+ *
+ * @property {Object} _schema - The validation schema for the model.
+ * @property {Function|null} _customValidator - Custom validation function.
+ * @property {Object|null} _api - API object for validation rules.
+ * @property {Object} validateResult - Result of the validation process.
+ * @property {boolean} isValid - Indicates if the model is valid.
+ *
+ * @method static createFactory
+ *   Creates a factory for generating TurtlRequestModel instances with a given schema and optional custom validator.
+ *   @param {Object} schema - Schema definition for the request model.
+ *   @param {Function|null} [customValidator=null] - Optional custom validation function.
+ *   @returns {{create: function(Object=, Object=): TurtlRequestModel}} Factory object with a `create` method.
+ */
 export class TurtlRequestModel {
   constructor(data = {}, schema = {}, customValidator = null, api = null) {
     this._schema = schema;

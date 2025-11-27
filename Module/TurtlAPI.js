@@ -2,6 +2,46 @@ import { TurtlAPIService } from "./TurtlAPIService.js";
 import { TurtlRequestModel } from "./TurtlRequestModel.js";
 import { TurtlResponse } from "./TurtlResponse.js";
 
+/**
+ * TurtlAPI is a modular API client for managing services, endpoints, and request models with built-in validation.
+ *
+ * @class
+ * @example
+ * const api = new TurtlAPI({
+ *   host: "https://api.example.com",
+ *   getAuthToken: () => localStorage.getItem("token"),
+ *   mock: false
+ * });
+ *
+ * @param {Object} config - Configuration object.
+ * @param {string} config.host - The base URL for API requests.
+ * @param {Function} [config.getAuthToken=null] - Optional function to retrieve authentication token.
+ * @param {boolean} [config.mock=false] - Whether to enable mock mode for responses.
+ *
+ * @property {string} host - The API host URL.
+ * @property {Function|null} getAuthToken - Function to retrieve authentication token.
+ * @property {Map<string, TurtlAPIService>} services - Registry of API services.
+ * @property {Map<string, Function>} validationRules - Registry of validation rules.
+ * @property {boolean} mock - Indicates if mock mode is enabled.
+ * @property {Map<string, string>} headers - Registry of global headers.
+ *
+ * @description
+ * - Manages API services and endpoints.
+ * - Supports request model creation and validation.
+ * - Provides built-in validation rules: required, email, minLength, arrayOf, instanceOf, typeOf.
+ * - Handles global headers and authentication.
+ * - Supports mock responses for testing.
+ *
+ * @method registerValidationRule(name, fn) Registers or overrides a validation rule.
+ * @method getValidationRule(name) Retrieves a validation rule by name.
+ * @method listValidationRules() Lists all registered validation rule names.
+ * @method addService(service) Adds a new service to the API.
+ * @method getService(name) Retrieves a service by name.
+ * @method call(fullName, modelOrData, mockResult) Calls an endpoint with data or a request model.
+ * @method createRequest(fullName, data) Creates and validates a request model for an endpoint.
+ * @method addHeader(name, value) Adds a global header.
+ * @method getHeaders() Returns the global headers map.
+ */
 export class TurtlAPI {
   /**
    * Creates a new TurtlAPI instance with configuration and built-in validation rules.
