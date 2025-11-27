@@ -1,3 +1,11 @@
+## [0.9.4](https://github.com/davi-it-projects/turtl-js-api/compare/v0.9.3...v0.9.4) (2025-11-27)
+
+
+### Bug Fixes
+
+* add jsdoc to classes ([0a4296a](https://github.com/davi-it-projects/turtl-js-api/commit/0a4296afb55ff064e43bc2ff83bfeeaa46ac2a64))
+* remove option for addService with name+model, now just model. added jsdoc to all public used methods ([510978d](https://github.com/davi-it-projects/turtl-js-api/commit/510978d2bd44417b8527891b0c17b26b61f579f6))
+
 ## [0.9.3](https://github.com/davi-it-projects/turtl-js-api/compare/v0.9.2...v0.9.3) (2025-11-27)
 
 
