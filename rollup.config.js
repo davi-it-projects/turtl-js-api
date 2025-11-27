@@ -1,13 +1,23 @@
-// rollup.config.js
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
+import dts from "rollup-plugin-dts";
 
-export default {
-    input: 'Module/index.js', // new entry
+export default [
+  {
+    input: "Module/index.js",
     output: {
-        file: 'dist/turtl-js-api.mjs',
-        format: 'es',
-        sourcemap: true
+      file: "dist/turtl-js-api.mjs",
+      format: "es",
+      sourcemap: true,
     },
-    plugins: [nodeResolve(), commonjs()]
-};
+    plugins: [nodeResolve(), commonjs()],
+  },
+  {
+    input: "dist/types/index.d.ts",
+    output: {
+      file: "dist/turtl-js-api.d.ts",
+      format: "es",
+    },
+    plugins: [dts()],
+  },
+];
