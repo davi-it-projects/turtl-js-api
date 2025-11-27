@@ -177,7 +177,7 @@ export class TurtlAPI {
     });
   }
 
-  async call(fullName, modelOrData = {}, mockResult = true) {
+  async call(fullName, modelOrData = {}, mockResult = false) {
     const data = this.#getDataFromFullName(fullName);
     if (data.Failed) {
       return data.Response;
@@ -211,7 +211,7 @@ export class TurtlAPI {
     }
   }
 
-  async #callWithData(data, service, endpoint, mockResult = true) {
+  async #callWithData(data, service, endpoint, mockResult) {
     const modelFactory = service.getModel(endpoint.modelName);
     if (
       modelFactory &&
@@ -229,14 +229,14 @@ export class TurtlAPI {
     return TurtlResponse.Error("Invalid data");
   }
 
-  async #callWithModel(requestModel, service, endpoint, mockResult = true) {
+  async #callWithModel(requestModel, service, endpoint, mockResult) {
     if (!requestModel.isValid) {
       return requestModel.validateResult;
     }
     return await this.#sendRequest(requestModel, service, endpoint, mockResult);
   }
 
-  async #sendRequest(model, service, endpoint, mockResult = true) {
+  async #sendRequest(model, service, endpoint, mockResult) {
     if (this.mock) {
       if (mockResult) {
         // If endpoint has a mockResponse, use it
