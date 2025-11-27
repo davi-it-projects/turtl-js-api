@@ -34,7 +34,18 @@ accountService.addModel("login", TurtlRequestModel.createFactory({
         { rule: "required" },
         { rule: "string" }
     ]
-}));
+},
+    (request) => {
+        console.log("something", request)
+        if (request.email != request.password) {
+            return TurtlResponse.Success("test", {})
+        }
+        else {
+            return TurtlResponse.Error("same")
+        }
+
+    }
+));
 
 accountService.addEndpoint("login", {
     path: "/login.php",
@@ -48,22 +59,22 @@ accountService.addEndpoint("login", {
 api.addService(accountService);
 
 // =-=-=-= INCORRECT LOGIN =-=-=-=
-const request = api.createRequest("account.login", {
-    email: "user@example.com",
-    password: "123456"
-});
+// const request = api.createRequest("account.login", {
+//     email: "user@example.com",
+//     password: "123456"
+// });
 
-const response = await api.call("account.login", request);
-console.log("wrong input", response);
+// const response = await api.call("account.login", request);
+// console.log("wrong input", response);
 
-// =-=-=-= INVALID INPUT =-=-=-=
-const invalidRequest = api.createRequest("account.login", {
-    email: "invalid-email.com",
-    password: ""
-});
+// // =-=-=-= INVALID INPUT =-=-=-=
+// const invalidRequest = api.createRequest("account.login", {
+//     email: "invalid-email.com",
+//     password: ""
+// });
 
-const invalidResponse = await api.call("account.login", invalidRequest);
-console.log("invalid input", invalidResponse);
+// const invalidResponse = await api.call("account.login", invalidRequest);
+// console.log("invalid input", invalidResponse);
 
 // =-=-=-= CORRECT LOGIN =-=-=-=
 const correctResponse = await api.call("account.login", {
@@ -71,5 +82,7 @@ const correctResponse = await api.call("account.login", {
     password: "debugpass"
 }
 );
+
+console.log(api.listValidationRules())
 
 console.log("correct", correctResponse);
