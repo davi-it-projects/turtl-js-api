@@ -1,3 +1,10 @@
+# [0.10.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.9.6...v0.10.0) (2026-01-05)
+
+
+### Features
+
+* add group log for mock requests ([b1b0618](https://github.com/davi-it-projects/turtl-js-api/commit/b1b06187411c9f0a03e57b2a652763a93b260694))
+
 ## [0.9.6](https://github.com/davi-it-projects/turtl-js-api/compare/v0.9.5...v0.9.6) (2026-01-05)
 
 

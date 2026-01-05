@@ -671,38 +671,88 @@ class TurtlAPI {
     );
   }
 
+  async #createMockResponse(endpoint, service, mockResult, model, response) {
+    console.groupCollapsed(
+      `%cMOCK ${endpoint.method} ${service.basePath}${endpoint.path}`,
+      "color:#9b59b6;font-weight:bold"
+    );
+
+    console.log("Request model:", model.toDataObject());
+    console.log("Mock result:", mockResult ? "success" : "failure");
+    console.log("Response:", response);
+
+    console.groupEnd();
+    return response;
+  }
+
   async #prepareSendRequest(model, service, endpoint, mockResult) {
     if (this.mock) {
       if (mockResult) {
         // If endpoint has a mockResponse, use it
         if (typeof endpoint.mockResponseSuccess === "function") {
-          return await endpoint.mockResponseSuccess(model);
+          return this.#createMockResponse(
+            endpoint,
+            service,
+            mockResult,
+            model,
+            await endpoint.mockResponseSuccess(model)
+          );
         }
         if (
           endpoint.mockResponseSuccess !== undefined &&
           endpoint.mockResponseSuccess !== null
         ) {
-          return typeof endpoint.mockResponseSuccess.then === "function"
-            ? await endpoint.mockResponseSuccess
-            : endpoint.mockResponseSuccess;
+          return this.#createMockResponse(
+            endpoint,
+            service,
+            mockResult,
+            model,
+            typeof endpoint.mockResponseSuccess.then === "function"
+              ? await endpoint.mockResponseSuccess
+              : endpoint.mockResponseSuccess
+          );
         }
         // Default mock response
-        return TurtlResponse.Success("Mocked response", {});
+        return this.#createMockResponse(
+          endpoint,
+          service,
+          mockResult,
+          model,
+          TurtlResponse.Success("Mocked response", {})
+        );
       } else {
         // If endpoint has a mockResponseFailure, use it
         if (typeof endpoint.mockResponseFailure === "function") {
-          return await endpoint.mockResponseFailure(model);
+          return this.#createMockResponse(
+            endpoint,
+            service,
+            mockResult,
+            model,
+            await endpoint.mockResponseFailure(model)
+          );
         }
         if (
           endpoint.mockResponseFailure !== undefined &&
           endpoint.mockResponseFailure !== null
         ) {
-          return typeof endpoint.mockResponseFailure.then === "function"
-            ? await endpoint.mockResponseFailure
-            : endpoint.mockResponseFailure;
+          return this.#createMockResponse(
+            endpoint,
+            service,
+            mockResult,
+            model,
+            typeof endpoint.mockResponseFailure.then === "function"
+              ? await endpoint.mockResponseFailure
+              : endpoint.mockResponseFailure
+          );
         }
         // Default mock failure response
-        return TurtlResponse.Error("Mocked failure response");
+        return this.#createMockResponse(
+          endpoint,
+          service,
+          mockResult,
+          model,
+          TurtlResponse.Error("Mocked failure response")
+        );
       }
     }
 
