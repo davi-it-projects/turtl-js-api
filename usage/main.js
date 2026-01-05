@@ -1,59 +1,58 @@
 import {
-    TurtlAPI,
-    TurtlAPIService,
-    TurtlEndpoint,
-    TurtlRequestModel,
-    TurtlResponse
+  TurtlAPI,
+  TurtlAPIService,
+  TurtlEndpoint,
+  TurtlRequestModel,
+  TurtlResponse,
 } from "../Module/index.js";
 
 // Create the API instance
 const api = new TurtlAPI({
-    host: "http://jsmodule.local/APIModule/usage/debugAPI",
-    getAuthToken: () => localStorage.getItem("SessionKey"),
-    mock: true
+  host: "http://apimodule.local/usage/debugAPI/",
+  getAuthToken: () => localStorage.getItem("SessionKey"),
+  mock: true,
 });
 
 // =-=-=-= REGISTER VALIDATION RULES =-=-=-=
 
 api.registerValidationRule("string", (value, _instance, _options) => {
-    return typeof value === "string"
-        ? TurtlResponse.Success()
-        : TurtlResponse.Error("Value must be a piece of text.");
+  return typeof value === "string"
+    ? TurtlResponse.Success()
+    : TurtlResponse.Error("Value must be a piece of text.");
 });
 
 // =-=-=-= DEFINE SERVICE & MODELS =-=-=-=
 const accountService = new TurtlAPIService("account", "/account");
 
 // Use the new array-based schema with rules by name
-accountService.addModel("login", TurtlRequestModel.createFactory({
-    email: [
-        { rule: "required" },
-        { rule: "email" }
-    ],
-    password: [
-        { rule: "required" },
-        { rule: "string" }
-    ]
-},
+accountService.addModel(
+  "login",
+  TurtlRequestModel.createFactory(
+    {
+      email: [{ rule: "required" }, { rule: "email" }],
+      password: [{ rule: "required" }, { rule: "string" }],
+    },
     (request) => {
-        console.log("something", request)
-        if (request.email != request.password) {
-            return TurtlResponse.Success("test", {})
-        }
-        else {
-            return TurtlResponse.Error("same")
-        }
-
+      console.log("something", request);
+      if (request.email != request.password) {
+        return TurtlResponse.Success("test", {});
+      } else {
+        return TurtlResponse.Error("same");
+      }
     }
-));
+  )
+);
 
 accountService.addEndpoint("login", {
-    path: "/login.php",
-    method: "POST",
-    modelName: "login",
-    requiresAuth: false,
-    mockResponseSuccess: (model) => TurtlResponse.Success("Mock login", { user: { id: 1, email: model.email, name: "Mock User" } }),
-    mockResponseFailure: () => TurtlResponse.Error("Mock login failure")
+  path: "/login.php",
+  method: "POST",
+  modelName: "login",
+  requiresAuth: false,
+  mockResponseSuccess: (model) =>
+    TurtlResponse.Success("Mock login", {
+      user: { id: 1, email: model.email, name: "Mock User" },
+    }),
+  mockResponseFailure: () => TurtlResponse.Error("Mock login failure"),
 });
 
 api.addService(accountService);
@@ -78,11 +77,10 @@ api.addService(accountService);
 
 // =-=-=-= CORRECT LOGIN =-=-=-=
 const correctResponse = await api.call("account.login", {
-    email: "debug@example.com",
-    password: "debugpass"
-}
-);
+  email: "debug@example.com",
+  password: "debugpass",
+});
 
-console.log(api.listValidationRules())
+console.log(api.listValidationRules());
 
 console.log("correct", correctResponse);

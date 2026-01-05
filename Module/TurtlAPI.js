@@ -343,7 +343,10 @@ export class TurtlAPI {
         if (typeof endpoint.mockResponseSuccess === "function") {
           return await endpoint.mockResponseSuccess(model);
         }
-        if (endpoint.mockResponseSuccess !== undefined) {
+        if (
+          endpoint.mockResponseSuccess !== undefined &&
+          endpoint.mockResponseSuccess !== null
+        ) {
           return typeof endpoint.mockResponseSuccess.then === "function"
             ? await endpoint.mockResponseSuccess
             : endpoint.mockResponseSuccess;
@@ -355,7 +358,10 @@ export class TurtlAPI {
         if (typeof endpoint.mockResponseFailure === "function") {
           return await endpoint.mockResponseFailure(model);
         }
-        if (endpoint.mockResponseFailure !== undefined) {
+        if (
+          endpoint.mockResponseFailure !== undefined &&
+          endpoint.mockResponseFailure !== null
+        ) {
           return typeof endpoint.mockResponseFailure.then === "function"
             ? await endpoint.mockResponseFailure
             : endpoint.mockResponseFailure;
