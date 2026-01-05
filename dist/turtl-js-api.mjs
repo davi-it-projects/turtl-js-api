@@ -236,7 +236,7 @@ class TurtlRequestModel {
  *   Adds an endpoint to the service.
  * @method getEndpoint(name: string): TurtlEndpoint
  *   Gets an endpoint by name, applying service headers.
- * @method addModel(name: string, model: TurtlRequestModel): void
+ * @method addModel(name: string, model: TurtlRequestModel | Object): void
  *   Adds a request model to the service.
  * @method getModel(name: string): TurtlRequestModel
  *   Gets a request model by name.
@@ -298,7 +298,7 @@ class TurtlAPIService {
    * Add a model to the Service
    *
    * @param {string} name - model name
-   * @param {TurtlRequestModel} model - model class
+   * @param {TurtlRequestModel | Object} model - model class
    */
   addModel(name, model) {
     if (this.Models.has(name)) {
@@ -678,7 +678,10 @@ class TurtlAPI {
         if (typeof endpoint.mockResponseSuccess === "function") {
           return await endpoint.mockResponseSuccess(model);
         }
-        if (endpoint.mockResponseSuccess !== undefined) {
+        if (
+          endpoint.mockResponseSuccess !== undefined &&
+          endpoint.mockResponseSuccess !== null
+        ) {
           return typeof endpoint.mockResponseSuccess.then === "function"
             ? await endpoint.mockResponseSuccess
             : endpoint.mockResponseSuccess;
@@ -690,7 +693,10 @@ class TurtlAPI {
         if (typeof endpoint.mockResponseFailure === "function") {
           return await endpoint.mockResponseFailure(model);
         }
-        if (endpoint.mockResponseFailure !== undefined) {
+        if (
+          endpoint.mockResponseFailure !== undefined &&
+          endpoint.mockResponseFailure !== null
+        ) {
           return typeof endpoint.mockResponseFailure.then === "function"
             ? await endpoint.mockResponseFailure
             : endpoint.mockResponseFailure;

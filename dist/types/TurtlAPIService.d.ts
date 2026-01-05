@@ -21,7 +21,7 @@
  *   Adds an endpoint to the service.
  * @method getEndpoint(name: string): TurtlEndpoint
  *   Gets an endpoint by name, applying service headers.
- * @method addModel(name: string, model: TurtlRequestModel): void
+ * @method addModel(name: string, model: TurtlRequestModel | Object): void
  *   Adds a request model to the service.
  * @method getModel(name: string): TurtlRequestModel
  *   Gets a request model by name.
@@ -62,9 +62,9 @@ export class TurtlAPIService {
      * Add a model to the Service
      *
      * @param {string} name - model name
-     * @param {TurtlRequestModel} model - model class
+     * @param {TurtlRequestModel | Object} model - model class
      */
-    addModel(name: string, model: TurtlRequestModel): void;
+    addModel(name: string, model: TurtlRequestModel | any): void;
     /**
      * Get a model by a name
      *
