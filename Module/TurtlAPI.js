@@ -230,7 +230,15 @@ export class TurtlAPI {
   ) {
     return new Promise((resolve) => {
       const xhr = new XMLHttpRequest();
-      xhr.open(method, url);
+      
+      // Handle GET requests with query parameters
+      let finalUrl = url;
+      if (method.toUpperCase() === "GET" && body && Object.keys(body).length > 0) {
+        const params = new URLSearchParams(body);
+        finalUrl = `${url}?${params.toString()}`;
+      }
+      
+      xhr.open(method, finalUrl);
       xhr.setRequestHeader("Content-Type", "application/json");
 
       if (requiresAuth) {
@@ -259,7 +267,9 @@ export class TurtlAPI {
       xhr.onerror = () => resolve(TurtlResponse.Error("Network error"));
       xhr.ontimeout = () => resolve(TurtlResponse.Error("Request timed out."));
 
-      xhr.send(JSON.stringify(body));
+      // Only send body for non-GET requests
+      const sendBody = method.toUpperCase() !== "GET" ? JSON.stringify(body) : null;
+      xhr.send(sendBody);
     });
   }
 

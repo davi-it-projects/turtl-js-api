@@ -8,9 +8,9 @@ import {
 
 // Create the API instance
 const api = new TurtlAPI({
-  host: "http://apimodule.local/usage/debugAPI/",
+  host: "http://apimodule.local/usage/debugAPI",
   getAuthToken: () => localStorage.getItem("SessionKey"),
-  mock: true,
+  mock: false,
 });
 
 // =-=-=-= REGISTER VALIDATION RULES =-=-=-=
@@ -55,6 +55,20 @@ accountService.addEndpoint("login", {
   mockResponseFailure: () => TurtlResponse.Error("Mock login failure"),
 });
 
+accountService.addModel(
+  "getAccountInfo",
+  TurtlRequestModel.createFactory({
+    userId: [{ rule: "required" }],
+  })
+);
+
+accountService.addEndpoint("data", {
+  path: "/data.php",
+  method: "GET",
+  requiresAuth: false,
+  modelName: "getAccountInfo",
+});
+
 api.addService(accountService);
 
 // =-=-=-= INCORRECT LOGIN =-=-=-=
@@ -76,11 +90,12 @@ api.addService(accountService);
 // console.log("invalid input", invalidResponse);
 
 // =-=-=-= CORRECT LOGIN =-=-=-=
-const correctResponse = await api.call("account.login", {
-  email: "debug@example.com",
-  password: "debugpass",
-});
+// const correctResponse = await api.call("account.login", {
+//   email: "debug@example.com",
+//   password: "debugpass",
+// });
 
-console.log(api.listValidationRules());
+// console.log(api.listValidationRules());
 
-console.log("correct", correctResponse);
+const getResponse = await api.call("account.data", { userId: 1 });
+console.log("get response", getResponse);

@@ -874,5 +874,11 @@ class TurtlAPI {
   }
 }
 
-export { TurtlAPI, TurtlAPIService, TurtlEndpoint, TurtlRequestModel, TurtlResponse };
+export {
+  TurtlAPI,
+  TurtlAPIService,
+  TurtlEndpoint,
+  TurtlRequestModel,
+  TurtlResponse,
+};
 //# sourceMappingURL=turtl-js-api.mjs.map
