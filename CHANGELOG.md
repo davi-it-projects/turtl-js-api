@@ -1,3 +1,10 @@
+# [0.11.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.10.0...v0.11.0) (2026-01-06)
+
+
+### Features
+
+* added basic query params to get ([b817f03](https://github.com/davi-it-projects/turtl-js-api/commit/b817f03463beba26de1927c821103745e96a5b69))
+
 # [0.10.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.9.6...v0.10.0) (2026-01-05)
 
 
