@@ -47,9 +47,6 @@ export class TurtlAPIService {
     this.endpoints = new Map();
     this.Models = new Map();
     this.headers = new Map();
-
-    // Add default models
-    this.addModel("empty", TurtlRequestModel.createFactory({}));
   }
 
   /**
@@ -61,7 +58,9 @@ export class TurtlAPIService {
   addEndpoint(name, config) {
     const endpoint = new TurtlEndpoint({ ...config, name });
     if (!this.Models.has(endpoint.modelName)) {
-      throw new Error(`Request model '${endpoint.modelName}' does not exist`);
+      console.warn(
+        `Request model '${endpoint.modelName}' does not exist, It may exist on the global api, then you can ignore this warning`
+      );
     }
     this.endpoints.set(name, endpoint);
   }

@@ -25,7 +25,7 @@ api.registerValidationRule("string", (value, _instance, _options) => {
 const accountService = new TurtlAPIService("account", "/account");
 
 // Use the new array-based schema with rules by name
-accountService.addModel(
+api.addModel(
   "login",
   TurtlRequestModel.createFactory(
     {
@@ -71,31 +71,29 @@ accountService.addEndpoint("data", {
 
 api.addService(accountService);
 
-// =-=-=-= INCORRECT LOGIN =-=-=-=
-// const request = api.createRequest("account.login", {
-//     email: "user@example.com",
-//     password: "123456"
-// });
+const request = api.createRequest("account.login", {
+  email: "user@example.com",
+  password: "123456",
+});
 
-// const response = await api.call("account.login", request);
-// console.log("wrong input", response);
+const response = await api.call("account.login", request);
+console.log("wrong input", response);
 
-// // =-=-=-= INVALID INPUT =-=-=-=
-// const invalidRequest = api.createRequest("account.login", {
-//     email: "invalid-email.com",
-//     password: ""
-// });
+// =-=-=-= INVALID INPUT =-=-=-=
+const invalidRequest = api.createRequest("account.login", {
+  email: "invalid-email.com",
+  password: "",
+});
 
-// const invalidResponse = await api.call("account.login", invalidRequest);
-// console.log("invalid input", invalidResponse);
+const invalidResponse = await api.call("account.login", invalidRequest);
+console.log("invalid input", invalidResponse);
 
-// =-=-=-= CORRECT LOGIN =-=-=-=
-// const correctResponse = await api.call("account.login", {
-//   email: "debug@example.com",
-//   password: "debugpass",
-// });
+const correctResponse = await api.call("account.login", {
+  email: "debug@example.com",
+  password: "debugpass",
+});
 
-// console.log(api.listValidationRules());
+console.log(api.listValidationRules());
 
 const getResponse = await api.call("account.data", { userId: 1 });
 console.log("get response", getResponse);
