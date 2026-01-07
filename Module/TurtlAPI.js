@@ -65,12 +65,18 @@ export class TurtlAPI {
    * - `instanceOf`: Validates value is instance of specified class
    * - `typeOf`: Validates value matches specified primitive type
    */
-  constructor({ host, getAuthToken = null, mock = false }) {
+  constructor({
+    host,
+    getAuthToken = null,
+    mock = false,
+    defaultMockResult = false,
+  }) {
     this.host = host;
     this.getAuthToken = getAuthToken;
     this.services = new Map();
     this.validationRules = new Map();
     this.mock = mock;
+    this.defaultMockResult = defaultMockResult;
     this.headers = new Map();
     this.Models = new Map();
 
@@ -290,7 +296,10 @@ export class TurtlAPI {
    * @param {boolean} [mockResult=false] - whether to return a mock success or failure response (only in mock mode)
    * @returns {TurtlResponse} - response from the endpoint or error response
    */
-  async call(fullName, modelOrData = {}, mockResult = false) {
+  async call(fullName, modelOrData = {}, mockResult = null) {
+    if (mockResult == null) {
+      mockResult = this.defaultMockResult;
+    }
     const data = this.#getDataFromFullName(fullName);
     if (data.Failed) {
       return data.Response;
