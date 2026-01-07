@@ -62,7 +62,7 @@ export class TurtlAPI {
      * - `instanceOf`: Validates value is instance of specified class
      * - `typeOf`: Validates value matches specified primitive type
      */
-    constructor({ host, getAuthToken, mock }: {
+    constructor({ host, getAuthToken, mock, defaultMockResult, }: {
         host: string;
         getAuthToken?: Function;
         mock?: boolean;
@@ -72,6 +72,7 @@ export class TurtlAPI {
     services: any;
     validationRules: any;
     mock: boolean;
+    defaultMockResult: any;
     headers: any;
     Models: any;
     /**
