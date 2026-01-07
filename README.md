@@ -1,30 +1,32 @@
 # Turtl JS API
+
 `Turtl JS API` is a lightweight and flexible module that helps you build structured, model-driven API clients in JavaScript. It supports validation, authentication, and dynamic service/endpoint configuration, enabling consistent request modeling and response handling.
 
 ### ✨ Features
-* Modular design: define services, models, and endpoints separately
-* Custom validation rules
-* Request/response abstraction with built-in helpers
-* Support for authenticated and unauthenticated endpoints
-* Lightweight – no external dependencies
+
+- Modular design: define services, models, and endpoints separately
+- Custom validation rules
+- Request/response abstraction with built-in helpers
+- Support for authenticated and unauthenticated endpoints
+- Lightweight – no external dependencies
 
 # 📦 Installation
 
 You can include it in your project via CDN
+
 #### Using CDN
+
 ```js
 <script type="module">
-import {
-    TurtlAPI,
-    TurtlAPIService,
-    TurtlEndpoint,
-    TurtlRequestModel,
-    TurtlResponse
-} from 'https://cdn.jsdelivr.net/gh/davi-it-projects/turtl-js-api@latest/dist/turtl-js-api.mjs';
+  import{" "}
+  {(TurtlAPI, TurtlAPIService, TurtlEndpoint, TurtlRequestModel, TurtlResponse)}{" "}
+  from
+  'https://cdn.jsdelivr.net/gh/davi-it-projects/turtl-js-api@latest/dist/turtl-js-api.mjs';
 </script>
 ```
 
 this client aims to always return the response in the same format (`TurtleResponse`):
+
 ```js
 {
     "success":bool,
@@ -34,44 +36,52 @@ this client aims to always return the response in the same format (`TurtleRespon
 ```
 
 # 🚀 Quick Start
+
 1. Create an API Client
+
 ```js
 const api = new TurtlAPI({
-    host: "https://example.com/api/",
-    getAuthToken: () => localStorage.getItem("SessionKey") // or any other method
+  host: "https://example.com/api/",
+  getAuthToken: () => localStorage.getItem("SessionKey"), // or any other method
 });
 ```
--- mock can be enabled by also giving the value ```mock: true```  this returns the mock response instead of calling the actual api
+
+-- mock can be enabled by also giving the value `mock: true` this returns the mock response instead of calling the actual api
 
 2. Define a Service
+
 ```js
 const accountService = new TurtlAPIService("account", "/account");
 ```
 
 3. Add Request Models
+
 ```js
-accountService.addModel("login", TurtlRequestModel.createFactory({
-    email: [
-        { rule: "required" },
-        { rule: "email" }
-    ],
+accountService.addModel(
+  "login",
+  TurtlRequestModel.createFactory({
+    email: [{ rule: "required" }, { rule: "email" }],
     password: [
-        { rule: "required" },
-        { rule: "typeOf", options: { type: "string" } }
-    ]
-}));
+      { rule: "required" },
+      { rule: "typeOf", options: { type: "string" } },
+    ],
+  })
+);
 ```
+
 -- some rules allow error messages to be overridden, see rules for details  
 4. Define Endpoints
+
 ```js
 accountService.addEndpoint("login", {
-    path: "/login.php",
-    method: "POST",
-    modelName: "login",
-    requiresAuth: false,
-    headers: {'custom-Header':'value'}
+  path: "/login.php",
+  method: "POST",
+  modelName: "login",
+  requiresAuth: false,
+  headers: { "custom-Header": "value" },
 });
 ```
+
 -- an endpoint can be given 2 mock responses, a succesfull one and a failed one. these are used when mock is enabled
 headers is optional
 authentication is send via header `Authorization` with value `Bearer {token}`
@@ -84,97 +94,106 @@ mockResponseFailure: () => TurtlResponse.Error("Mock login failure")
 ```
 
 5. Register the Service with the API
+
 ```js
 api.addService(accountService);
 ```
+
 6. Make Requests
+
 ```js
 const request = api.createRequest("account.login", {
-    email: "user@example.com",
-    password: "123456"
+  email: "user@example.com",
+  password: "123456",
 });
 
 const response = await api.call("account.login", request);
 ```
--- in case mocking is enabled it will default to trying to return the succesfull mock result in the endpoint, useing ```api.call("...",{},false)``` will make it return a failed response
+
+-- in case mocking is enabled it will default to trying to return the succesfull mock result in the endpoint, useing `api.call("...",{},false)` will make it return a failed response
 
 -- default succes or failure responses are given in mock mode when no mock model is defined
-
 
 # ✅ Validation Rules Reference
 
 Turtl JS API includes a set of built-in validation rules that can be used in request models to ensure data integrity before requests are sent to the server. You can also register your own rules.
+
 ## 🛠️ Usage Example
+
 ```js
 TurtlRequestModel.createFactory({
-    email: [
-        { rule: "required" },
-        { rule: "email" }
-    ],
-    age: [
-        { rule: "number" },
-        { rule: "minLength", options: { length: 1 } }
-    ]
+  email: [{ rule: "required" }, { rule: "email" }],
+  age: [{ rule: "number" }, { rule: "minLength", options: { length: 1 } }],
 });
 ```
+
 ```js
-TurtlAPI.listValidationRules() // returns a array of the rule names
+TurtlAPI.listValidationRules(); // returns a array of the rule names
 ```
 
 ## Built-in Rules
 
 some rules allow some of its errors to be overriden
-with ```options: { errors: ["first overridden message", "second overridden message"]}```
+with `options: { errors: ["first overridden message", "second overridden message"]}`
 if you only want to override the second message set errors to `["","new second message"]`
 -- note that overridden messages cant use `${}`
-
-
 
 `required`
 
 Ensures the field is not undefined, null, or an empty string.
+
 ```
 { rule: "required" }
 ```
+
 Fails when:
 
     The value is undefined, null, or "".
 
-overridable error messages:  
-1.  "Field is required." 
+overridable error messages:
+
+1.  "Field is required."
 
 `email`
 
 Validates the value is a syntactically correct email address.
+
 ```
 { rule: "email" }
 ```
+
 Fails when:
 
     The value is a string but not in valid email format like "user@example.com".
 
 overridable error messages:
+
 1. "Must be a valid email."
 
 `minLength`
 
 Ensures a string has at least a certain number of characters.
+
 ```
 { rule: "minLength", options: { length: 3 } }
 ```
+
 Fails when:
 
     The value is a string shorter than the specified length.
 
 overridable error messages:
+
 1. `Minimum length is ${options.length}.` -- note that overridden messages cant use `${}`
 
 `typeOf`
 
 Ensures the value is of a given type
+
 ```
 { rule: "typeOf", options: { type: "string"}}
 ```
+
 Fails when:
 
     The value si of a diffrent type
@@ -182,12 +201,13 @@ Fails when:
 Note: Has no effect if the value is undefined.
 
 overridable error messages:
-1. `Value must be of type '${type}', but got '${typeof value}'.` -- note that overridden messages cant use `${}`
 
+1. `Value must be of type '${type}', but got '${typeof value}'.` -- note that overridden messages cant use `${}`
 
 `arrayOf`
 
 Validates the field is an array of items with a specific primitive type or class instance.
+
 ```
 // Array of strings
 { rule: "arrayOf", options: { type: "string" } }
@@ -195,6 +215,7 @@ Validates the field is an array of items with a specific primitive type or class
 // Array of instances
 { rule: "arrayOf", options: { type: MyClass, isTypeClass: true } }
 ```
+
 Fails when:
 
     The value is not an array
@@ -202,6 +223,7 @@ Fails when:
     The items do not match the expected type
 
 overridable error messages:
+
 1. "Value must be an array."
 2. `Array item must be an instance of '${type.name}', but got '${typeof item}'.` -- note that overridden messages cant use `${}`
 3. `Array item must be of type '${type}', but got '${typeof item}'.` -- note that overridden messages cant use `${}`
@@ -209,24 +231,30 @@ overridable error messages:
 `instanceOf`
 
 Validates the field is an instance of a given class.
+
 ```
 { rule: "instanceOf", options: { type: MyClass } }
 ```
+
 Fails when:
 
     The value is not an instance of the provided constructor/class.
 
 overridable error message:
+
 1. `Value must be an instance of '${type.name}', but got '${typeof value}'.` -- note that overridden messages cant use `${}`
 2. `Value must be of type '${type}', but got '${typeof value}'.` -- note that overridden messages cant use `${}`
 
 ## Custom Rules
+
 You can register your own rules using:
+
 ```js
 api.registerValidationRule("myRule", (value, instance, options) => {
-    // return TurtlResponse.Success() or TurtlResponse.Error("message")
+  // return TurtlResponse.Success() or TurtlResponse.Error("message")
 });
 ```
+
 adding overridable errors can be done by changhing the message from `"message"` to `instance.getErrorMessage(index,"default message",options)`
 index starts at 0
 
@@ -238,19 +266,24 @@ index starts at 0
 IMPORTANT: a validation rule should always return a `TurtlResponse` either via the `Error(message)` method or the `Success()` method
 
 ### example
+
 ```js
 api.registerValidationRule("even", (value, instance, options) => {
-    if (value % 2 == 0){
-        return TurtlResponse.Success()
-    }
-    else{
-        return TurtlResponse.Error("Odd Numbers are not allowed!")
-    }
+  if (value % 2 == 0) {
+    return TurtlResponse.Success();
+  } else {
+    return TurtlResponse.Error("Odd Numbers are not allowed!");
+  }
 });
 ```
+
 Use it in a model like this:
+
 ```js
-someService.addModel("example", TurtlRequestModel.createFactory({
-    number: [{ rule: "even" }]
-}));
+someService.addModel(
+  "example",
+  TurtlRequestModel.createFactory({
+    number: [{ rule: "even" }],
+  })
+);
 ```
