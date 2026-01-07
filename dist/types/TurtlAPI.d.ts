@@ -73,6 +73,7 @@ export class TurtlAPI {
     validationRules: any;
     mock: boolean;
     headers: any;
+    Models: any;
     /**
      * Registers a new validation rule, overrides any rule that has the same name.
      *
@@ -105,6 +106,20 @@ export class TurtlAPI {
      * @returns {TurtlResponse} - response from the endpoint or error response
      */
     call(fullName: string, modelOrData?: {}, mockResult?: boolean): TurtlResponse;
+    /**
+     * Add a model to the Service
+     *
+     * @param {string} name - model name
+     * @param {TurtlRequestModel | Object} model - model class
+     */
+    addModel(name: string, model: TurtlRequestModel | any): void;
+    /**
+     * Get a model by a name
+     *
+     * @param {string} name - model name
+     * @returns {TurtlRequestModel} - model class
+     */
+    getModel(name: string): TurtlRequestModel;
     /**
      * Add a new service to the api
      *
@@ -142,5 +157,5 @@ export class TurtlAPI {
     #private;
 }
 import { TurtlResponse } from "./TurtlResponse.js";
-import { TurtlAPIService } from "./TurtlAPIService.js";
 import { TurtlRequestModel } from "./TurtlRequestModel.js";
+import { TurtlAPIService } from "./TurtlAPIService.js";

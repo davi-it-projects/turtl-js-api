@@ -1,3 +1,10 @@
+# [0.12.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.11.0...v0.12.0) (2026-01-07)
+
+
+### Features
+
+* version bump ([033d11c](https://github.com/davi-it-projects/turtl-js-api/commit/033d11c903307c3741ce4da810955774d120124f))
+
 # [0.11.0](https://github.com/davi-it-projects/turtl-js-api/compare/v0.10.0...v0.11.0) (2026-01-06)
 
 

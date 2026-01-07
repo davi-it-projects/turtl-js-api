@@ -259,9 +259,6 @@ class TurtlAPIService {
     this.endpoints = new Map();
     this.Models = new Map();
     this.headers = new Map();
-
-    // Add default models
-    this.addModel("empty", TurtlRequestModel.createFactory({}));
   }
 
   /**
@@ -273,7 +270,9 @@ class TurtlAPIService {
   addEndpoint(name, config) {
     const endpoint = new TurtlEndpoint({ ...config, name });
     if (!this.Models.has(endpoint.modelName)) {
-      throw new Error(`Request model '${endpoint.modelName}' does not exist`);
+      console.warn(
+        `Request model '${endpoint.modelName}' does not exist, It may exist on the global api, then you can ignore this warning`
+      );
     }
     this.endpoints.set(name, endpoint);
   }
@@ -407,6 +406,7 @@ class TurtlAPI {
     this.validationRules = new Map();
     this.mock = mock;
     this.headers = new Map();
+    this.Models = new Map();
 
     // Register built-in validation rules
     this.registerValidationRule("required", (value, instance, options) => {
@@ -513,6 +513,8 @@ class TurtlAPI {
       }
       return TurtlResponse.Success();
     });
+
+    this.addModel("empty", TurtlRequestModel.createFactory({}));
   }
 
   /**
@@ -565,14 +567,18 @@ class TurtlAPI {
   ) {
     return new Promise((resolve) => {
       const xhr = new XMLHttpRequest();
-      
+
       // Handle GET requests with query parameters
       let finalUrl = url;
-      if (method.toUpperCase() === "GET" && body && Object.keys(body).length > 0) {
+      if (
+        method.toUpperCase() === "GET" &&
+        body &&
+        Object.keys(body).length > 0
+      ) {
         const params = new URLSearchParams(body);
         finalUrl = `${url}?${params.toString()}`;
       }
-      
+
       xhr.open(method, finalUrl);
       xhr.setRequestHeader("Content-Type", "application/json");
 
@@ -603,7 +609,8 @@ class TurtlAPI {
       xhr.ontimeout = () => resolve(TurtlResponse.Error("Request timed out."));
 
       // Only send body for non-GET requests
-      const sendBody = method.toUpperCase() !== "GET" ? JSON.stringify(body) : null;
+      const sendBody =
+        method.toUpperCase() !== "GET" ? JSON.stringify(body) : null;
       xhr.send(sendBody);
     });
   }
@@ -651,6 +658,29 @@ class TurtlAPI {
     }
   }
 
+  /**
+   * Add a model to the Service
+   *
+   * @param {string} name - model name
+   * @param {TurtlRequestModel | Object} model - model class
+   */
+  addModel(name, model) {
+    if (this.Models.has(name)) {
+      throw new Error(`Request model '${name}' already exists`);
+    }
+    this.Models.set(name, model);
+  }
+
+  /**
+   * Get a model by a name
+   *
+   * @param {string} name - model name
+   * @returns {TurtlRequestModel} - model class
+   */
+  getModel(name) {
+    return this.Models.get(name);
+  }
+
   async #callWithData(data, service, endpoint, mockResult) {
     const modelFactory = service.getModel(endpoint.modelName);
     if (
@@ -658,13 +688,28 @@ class TurtlAPI {
       modelFactory.create &&
       typeof modelFactory.create === "function"
     ) {
-      const requestModel = modelFactory.create(data, this); // Inject api here
+      const requestModel = modelFactory.create(data, this);
       return await this.#callWithModel(
         requestModel,
         service,
         endpoint,
         mockResult
       );
+    } else {
+      const modelFactory = this.getModel(endpoint.modelName);
+      if (
+        modelFactory &&
+        modelFactory.create &&
+        typeof modelFactory.create === "function"
+      ) {
+        const requestModel = modelFactory.create(data, this);
+        return await this.#callWithModel(
+          requestModel,
+          service,
+          endpoint,
+          mockResult
+        );
+      }
     }
     return TurtlResponse.Error("Invalid data");
   }
@@ -857,6 +902,15 @@ class TurtlAPI {
         typeof modelFactory.create === "function"
       ) {
         return modelFactory.create(data, this); // Inject api here
+      } else {
+        const modelFactory = this.getModel(internal.Endpoint.modelName);
+        if (
+          modelFactory &&
+          modelFactory.create &&
+          typeof modelFactory.create === "function"
+        ) {
+          return modelFactory.create(data, this); // Inject api here
+        }
       }
       throw new Error(`Failed to create request '${fullName}'.`);
     } catch (error) {
