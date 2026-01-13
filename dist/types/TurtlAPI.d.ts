@@ -47,6 +47,7 @@ export class TurtlAPI {
      * @param {string} config.host - The API host URL
      * @param {Function} [config.getAuthToken=null] - Optional function to retrieve authentication token
      * @param {boolean} [config.mock=false] - Whether to use mock mode
+     * @param {boolean} [config.defaultMockResultmock=false] - What mock result to use in default
      *
      * @description
      * Initializes the TurtlAPI module with:
@@ -66,6 +67,7 @@ export class TurtlAPI {
         host: string;
         getAuthToken?: Function;
         mock?: boolean;
+        defaultMockResultmock?: boolean;
     });
     host: string;
     getAuthToken: Function;
